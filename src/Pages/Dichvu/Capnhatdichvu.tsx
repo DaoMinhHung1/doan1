@@ -5,18 +5,14 @@ import {
   Card,
   Checkbox,
   Col,
-  Dropdown,
   Form,
   Input,
   Layout,
-  Menu,
   Row,
   message,
 } from "antd";
 
-import Sider from "antd/es/layout/Sider";
-import { BellOutlined } from "@ant-design/icons";
-import { Content, Header } from "antd/es/layout/layout";
+import { Content } from "antd/es/layout/layout";
 import { useLocation } from "react-router-dom";
 import {
   collection,
@@ -26,6 +22,8 @@ import {
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
+import SiderComponent from "../../Component/SiderComponent";
+import HeaderComponent from "../../Component/Header";
 
 const Capnhatdichvu: React.FC = () => {
   const [checked, setChecked] = useState<number | null>(null);
@@ -109,113 +107,23 @@ const Capnhatdichvu: React.FC = () => {
     }
   };
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="1">Quản lý vai trò</Menu.Item>
-      <Menu.Item key="2" onClick={() => (window.location.href = "/user")}>
-        Quản lý tài khoản
-      </Menu.Item>
-      <Menu.Item key="3">Nhật kí người dùng</Menu.Item>
-    </Menu>
-  );
-
   return (
     <>
       <Layout>
-        <Sider
-          className="menubar"
-          width={200}
-          style={{ backgroundColor: "Menu" }}
-        >
-          <Menu theme="light" className="itembar">
-            <img className="alta" src="/asset/img/logoalta.png" alt="" />
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/dashboard";
-              }}
-            >
-              Dashboard
-            </Menu.Item>
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/thietbi";
-              }}
-            >
-              Thiết bị
-            </Menu.Item>
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/dichvu";
-              }}
-            >
-              Dịch vụ
-            </Menu.Item>
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/capso";
-              }}
-            >
-              Cấp số
-            </Menu.Item>
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/baocao";
-              }}
-            >
-              Báo cáo
-            </Menu.Item>
-
-            <Dropdown overlay={menu}>
-              <Menu.Item
-                className="menu-item"
-
-                // onClick={(e) => e.preventDefault()}
-              >
-                Cài đặt hệ thống
-              </Menu.Item>
-            </Dropdown>
-
-            <Menu.Item className="menu-item">Đăng xuất</Menu.Item>
-          </Menu>
-        </Sider>
+        <SiderComponent />
         <Layout>
-          <Header className="account bgheader">
-            <Col span={15}>
-              <h1 className="titletopbar">Thông tin cá nhân</h1>
-            </Col>
-            <Col span={5}>
-              <div className="">
-                <BellOutlined
-                  style={{
-                    fontSize: "24px",
-                    color: "red",
-                    marginLeft: "200px",
-                  }}
-                />
-              </div>
-            </Col>
-            <Col span={2}>
-              <img className="imgaccount" src="/asset/img/ao2.jpg" alt="" />
-            </Col>
-            <Col className="" span={2}>
-              <p className="xc">xin chào</p>
-              <p className="name">Đào Minh Hùng</p>
-            </Col>
-          </Header>
+          <HeaderComponent />
           <Content style={{ marginLeft: "70px" }}>
             <Row>
               <Col span={24}>
-                <h1 className="titletopbar">Quản lý thiết bị</h1>
+                <h1 className="titletopbar">Quản lý dịch vụ</h1>
               </Col>
             </Row>
             <Row>
-              <Card className="card-1">
-                <h1 className="titletopbar">Thông tin chi tiết</h1>
+              <Card style={{ marginTop: "-10px" }} className="card-1">
+                <h1 style={{ marginTop: "-10px" }} className="titletopbar">
+                  Thông tin chi tiết
+                </h1>
                 <Row>
                   <Col span={12}>
                     <div>
@@ -257,7 +165,9 @@ const Capnhatdichvu: React.FC = () => {
                 </Row>
                 <Row>
                   <Col span={24}>
-                    <h1 className="titletopbar">Quy tắc cấp số</h1>
+                    <h1 style={{ marginTop: "-10px" }} className="titletopbar">
+                      Quy tắc cấp số
+                    </h1>
                   </Col>
                 </Row>
                 <Row>
@@ -354,6 +264,7 @@ const Capnhatdichvu: React.FC = () => {
                 <Button
                   style={{ marginLeft: "-150px" }}
                   className="btn-thietbi2"
+                  onClick={() => (window.location.href = "/dichvu")}
                 >
                   Hủy bỏ
                 </Button>

@@ -1,19 +1,8 @@
-import { BellOutlined } from "@ant-design/icons";
-import {
-  Card,
-  Col,
-  Dropdown,
-  Input,
-  Layout,
-  Menu,
-  Row,
-  Select,
-  Table,
-} from "antd";
-import Sider from "antd/es/layout/Sider";
-import { Content, Header } from "antd/es/layout/layout";
+import { Card, Col, Input, Layout, Row, Select, Table } from "antd";
 
-import React, { useEffect } from "react";
+import { Content } from "antd/es/layout/layout";
+
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { RootState } from "../../redux/rootReducer";
@@ -24,11 +13,13 @@ import { fetchOrderNumbers } from "../../redux/ordernumbersSlice";
 import { Option } from "antd/es/mentions";
 import { DatePicker } from "antd";
 import { Form } from "antd";
+import SiderComponent from "../../Component/SiderComponent";
+import HeaderComponent from "../../Component/Header";
 
 const { Footer } = Layout;
 const { RangePicker } = DatePicker;
 
-const Chitietdichvu = () => {
+const Chitietdichvu: React.FC = () => {
   const location = useLocation();
   const service = location.state?.service;
 
@@ -71,105 +62,11 @@ const Chitietdichvu = () => {
     },
   ];
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="1">Quản lý vai trò</Menu.Item>
-      <Menu.Item key="2" onClick={() => (window.location.href = "/user")}>
-        Quản lý tài khoản
-      </Menu.Item>
-      <Menu.Item key="3">Nhật kí người dùng</Menu.Item>
-    </Menu>
-  );
-
   return (
     <Layout>
-      <Sider
-        className="menubar"
-        width={200}
-        style={{ backgroundColor: "Menu" }}
-      >
-        <Menu theme="light" className="itembar">
-          <img className="alta" src="/asset/img/logoalta.png" alt="" />
-          <Menu.Item
-            className="menu-item"
-            onClick={() => {
-              window.location.href = "/dashboard";
-            }}
-          >
-            Dashboard
-          </Menu.Item>
-          <Menu.Item
-            className="menu-item"
-            onClick={() => {
-              window.location.href = "/thietbi";
-            }}
-          >
-            Thiết bị
-          </Menu.Item>
-          <Menu.Item
-            className="menu-item"
-            onClick={() => {
-              window.location.href = "/dichvu";
-            }}
-          >
-            Dịch vụ
-          </Menu.Item>
-          <Menu.Item
-            className="menu-item"
-            onClick={() => {
-              window.location.href = "/capso";
-            }}
-          >
-            Cấp số
-          </Menu.Item>
-          <Menu.Item
-            className="menu-item"
-            onClick={() => {
-              window.location.href = "/baocao";
-            }}
-          >
-            Báo cáo
-          </Menu.Item>
-
-          <Dropdown overlay={menu}>
-            <Menu.Item
-              className="menu-item"
-
-              // onClick={(e) => e.preventDefault()}
-            >
-              Cài đặt hệ thống
-            </Menu.Item>
-          </Dropdown>
-
-          <Menu.Item className="menu-item">Đăng xuất</Menu.Item>
-        </Menu>
-      </Sider>
+      <SiderComponent />
       <Layout>
-        <Header className="account bgheader">
-          <Col span={15}>
-            <h1 style={{ marginLeft: "-20px" }} className="titletopbar">
-              Thiết bị Danh sách thiết bị
-            </h1>
-          </Col>
-          <Col span={5}>
-            <div className="">
-              <BellOutlined
-                style={{
-                  fontSize: "24px",
-                  color: "red",
-                  marginLeft: "200px",
-                }}
-              />
-            </div>
-          </Col>
-          <Col span={2}>
-            <img className="imgaccount" src="/asset/img/ao2.jpg" alt="" />
-          </Col>
-          <Col className="" span={2}>
-            <p className="xc">xin chào</p>
-            <p className="name">Đào Minh Hùng</p>
-          </Col>
-        </Header>
+        <HeaderComponent />
         <Content>
           <Layout style={{ marginTop: "-5px" }} className="center-content">
             <Row>

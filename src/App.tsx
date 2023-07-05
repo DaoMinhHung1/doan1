@@ -16,7 +16,6 @@ import Quanlydichvu from "./Pages/Dichvu/Quanlydichvu";
 import Themdichvu from "./Pages/Dichvu/Themdichvu";
 import Capnhatdichvu from "./Pages/Dichvu/Capnhatdichvu";
 import Quanlycapso from "./Pages/Capso/Quanlycapso";
-// import Quanlybaocao from "./Pages/Baocao/Quanlybaocao";
 import Capsomoi from "./Pages/Capso/Capsomoi";
 import Thongtincapso from "./Pages/Capso/Chitietcapso";
 import Danhsachcapsodangcho from "./Pages/Capso/Danhsachcsdangcho";
@@ -29,6 +28,7 @@ import Capnhattaikhoan from "./Pages/Taikhoan/Capnhattaikhoan";
 import User from "./User/User";
 import store from "./redux/rootReducer";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+import Quanlybaocao from "./Pages/Baocao/Quanlybaocao";
 
 function App() {
   return (
@@ -66,7 +66,7 @@ function App() {
           <Route path="/danhsachcsdangsd" component={Danhsachcsdangsd} />
           <Route path="/danhsachcsboqua" component={Danhsachcsboqua} />
           {/* Quản lý báo cáo */}
-          {/* <Route path="/baocao" component={Quanlybaocao} /> */}
+          <Route path="/baocao" component={Quanlybaocao} />
 
           {/* Quản lý tài khoản */}
           <Route path="/taikhoan" component={Quanlytaikhoan} />

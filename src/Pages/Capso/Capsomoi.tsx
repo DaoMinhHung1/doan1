@@ -1,24 +1,13 @@
 import React, { useEffect, useState } from "react";
 
-import {
-  Button,
-  Card,
-  Col,
-  Dropdown,
-  Layout,
-  Menu,
-  Modal,
-  Row,
-  Select,
-  message,
-} from "antd";
+import { Button, Card, Col, Layout, Modal, Row, Select, message } from "antd";
 
-import Sider from "antd/es/layout/Sider";
-import { BellOutlined } from "@ant-design/icons";
-import { Content, Header } from "antd/es/layout/layout";
-import { getDatabase, push, ref, set } from "firebase/database";
+import { Content } from "antd/es/layout/layout";
+import { getDatabase, ref, set } from "firebase/database";
 import { v4 as uuidv4 } from "uuid";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
+import SiderComponent from "../../Component/SiderComponent";
+import HeaderComponent from "../../Component/Header";
 
 interface OrderNumbers {
   STT: string;
@@ -139,104 +128,12 @@ const Capsomoi: React.FC = () => {
     setSelectedOrder(null);
   };
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="1">Quản lý vai trò</Menu.Item>
-      <Menu.Item key="2" onClick={() => (window.location.href = "/user")}>
-        Quản lý tài khoản
-      </Menu.Item>
-      <Menu.Item key="3">Nhật kí người dùng</Menu.Item>
-    </Menu>
-  );
-
   return (
     <>
       <Layout>
-        <Sider
-          className="menubar"
-          width={200}
-          style={{ backgroundColor: "Menu" }}
-        >
-          <Menu theme="light" className="itembar">
-            <img className="alta" src="/asset/img/logoalta.png" alt="" />
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/dashboard";
-              }}
-            >
-              Dashboard
-            </Menu.Item>
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/thietbi";
-              }}
-            >
-              Thiết bị
-            </Menu.Item>
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/dichvu";
-              }}
-            >
-              Dịch vụ
-            </Menu.Item>
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/capso";
-              }}
-            >
-              Cấp số
-            </Menu.Item>
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/baocao";
-              }}
-            >
-              Báo cáo
-            </Menu.Item>
-
-            <Dropdown overlay={menu}>
-              <Menu.Item
-                className="menu-item"
-
-                // onClick={(e) => e.preventDefault()}
-              >
-                Cài đặt hệ thống
-              </Menu.Item>
-            </Dropdown>
-
-            <Menu.Item className="menu-item">Đăng xuất</Menu.Item>
-          </Menu>
-        </Sider>
+        <SiderComponent />
         <Layout>
-          <Header className="account bgheader">
-            <Col span={15}>
-              <h1 className="titletopbar">Thông tin cá nhân</h1>
-            </Col>
-            <Col span={5}>
-              <div className="">
-                <BellOutlined
-                  style={{
-                    fontSize: "24px",
-                    color: "red",
-                    marginLeft: "200px",
-                  }}
-                />
-              </div>
-            </Col>
-            <Col span={2}>
-              <img className="imgaccount" src="/asset/img/ao2.jpg" alt="" />
-            </Col>
-            <Col className="" span={2}>
-              <p className="xc">xin chào</p>
-              <p className="name">Đào Minh Hùng</p>
-            </Col>
-          </Header>
+          <HeaderComponent />
           <Content style={{ marginLeft: "70px" }}>
             <Row>
               <Col span={24}>

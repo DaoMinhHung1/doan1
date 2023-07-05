@@ -22,6 +22,7 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "crypto-browserify": "^3.12.0",
+    "dayjs": "^1.11.9",
     "express": "^4.18.2",
     "firebase": "^9.23.0",
     "fs": "^0.0.1-security",

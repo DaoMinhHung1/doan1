@@ -1,26 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Button,
   Card,
   Col,
-  Dropdown,
   Form,
   Input,
   Layout,
-  Menu,
   Row,
   Select,
-  Space,
   message,
 } from "antd";
 
-import Sider from "antd/es/layout/Sider";
-import { BellOutlined } from "@ant-design/icons";
-import { Content, Header } from "antd/es/layout/layout";
-import { Option } from "antd/es/mentions";
+import { Content } from "antd/es/layout/layout";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
+import SiderComponent from "../../Component/SiderComponent";
+import HeaderComponent from "../../Component/Header";
 
 interface DeviceData {
   matb: string;
@@ -30,6 +26,8 @@ interface DeviceData {
   dichvutb: string[];
   hoatdongtb: string;
   ketnoitb: string;
+  tendn: string;
+  matkhau: string;
   id: string;
 }
 
@@ -42,8 +40,15 @@ const Themthietbi: React.FC = () => {
     dichvutb: [],
     hoatdongtb: "",
     ketnoitb: "",
+    tendn: "",
+    matkhau: "",
     id: "",
   });
+
+  const [loginData, setLoginData] = useState<{
+    namedn: string;
+    password: string;
+  } | null>(null);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -54,133 +59,76 @@ const Themthietbi: React.FC = () => {
     setDeviceData((prevState) => ({ ...prevState, dichvutb: value }));
   };
 
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("userData");
+    if (storedUserData) {
+      const userData = JSON.parse(storedUserData);
+      setLoginData(userData);
+    }
+    console.log(storedUserData);
+  }, []);
+
   const handleAddDevice = async () => {
-    try {
-      const db = getFirestore();
-      const devicesCollection = collection(db, "devices");
+    if (loginData) {
+      console.log(loginData);
+      const namedn = loginData.namedn;
+      const password = loginData.password;
+      if (namedn === deviceData.tendn && password === deviceData.matkhau) {
+        try {
+          const db = getFirestore();
+          const devicesCollection = collection(db, "devices");
 
-      const newID = uuidv4();
+          const newID = uuidv4();
+          const deviceWithID = {
+            ...deviceData,
+            id: newID,
+            hoatdongtb: "Hoạt động",
+          }; // Set hoatdongtb to "Hoạt động"
+          await addDoc(devicesCollection, deviceWithID);
 
-      const deviceWithID = { ...deviceData, id: newID };
+          console.log("Thêm thiết bị thành công");
+          message.success("Thêm thiết bị thành công!");
 
-      await addDoc(devicesCollection, deviceWithID);
+          setDeviceData({
+            matb: "",
+            nametb: "",
+            addresstb: "",
+            loaitb: "",
+            dichvutb: [],
+            hoatdongtb: "",
+            ketnoitb: "",
+            tendn: "",
+            matkhau: "",
+            id: "",
+          });
 
-      console.log("Thêm thiết bị thành công");
-      message.success("Thêm thiết bị thành công!");
-
-      setDeviceData({
-        matb: "",
-        nametb: "",
-        addresstb: "",
-        loaitb: "",
-        dichvutb: [],
-        hoatdongtb: "",
-        ketnoitb: "",
-        id: "",
-      });
-    } catch (error) {
-      console.error("Lỗi khi thêm thiết bị:", error);
-      message.error("Lỗi khi thêm thiết bị");
+          // Set hoatdongtb to "ngừng hoạt động" after 5 minutes
+          setTimeout(() => {
+            setDeviceData((prevState) => ({
+              ...prevState,
+              hoatdongtb: "ngừng hoạt động",
+            }));
+          }, 5 * 60 * 1000); // 5 minutes in milliseconds
+        } catch (error) {
+          console.error("Lỗi khi thêm thiết bị:", error);
+          message.error("Lỗi khi thêm thiết bị");
+        }
+      } else {
+        message.error("Vui lòng nhập đúng tên đăng nhập và mật khẩu");
+      }
+    } else {
+      message.error("Không tìm thấy thông tin đăng nhập");
     }
   };
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="1">Quản lý vai trò</Menu.Item>
-      <Menu.Item key="2" onClick={() => (window.location.href = "/user")}>
-        Quản lý tài khoản
-      </Menu.Item>
-      <Menu.Item key="3">Nhật kí người dùng</Menu.Item>
-    </Menu>
-  );
+  console.log(deviceData.tendn);
+
   return (
     <>
       <Layout>
-        <Sider
-          className="menubar"
-          width={200}
-          style={{ backgroundColor: "Menu" }}
-        >
-          <Menu theme="light" className="itembar">
-            <img className="alta" src="/asset/img/logoalta.png" alt="" />
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/dashboard";
-              }}
-            >
-              Dashboard
-            </Menu.Item>
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/thietbi";
-              }}
-            >
-              Thiết bị
-            </Menu.Item>
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/dichvu";
-              }}
-            >
-              Dịch vụ
-            </Menu.Item>
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/capso";
-              }}
-            >
-              Cấp số
-            </Menu.Item>
-            <Menu.Item
-              className="menu-item"
-              onClick={() => {
-                window.location.href = "/baocao";
-              }}
-            >
-              Báo cáo
-            </Menu.Item>
-
-            <Dropdown overlay={menu}>
-              <Menu.Item
-                className="menu-item"
-
-                // onClick={(e) => e.preventDefault()}
-              >
-                Cài đặt hệ thống
-              </Menu.Item>
-            </Dropdown>
-
-            <Menu.Item className="menu-item">Đăng xuất</Menu.Item>
-          </Menu>
-        </Sider>
+        <SiderComponent />
         <Layout>
-          <Header className="account bgheader">
-            <Col span={15}>
-              <h1 className="titletopbar">Thông tin cá nhân</h1>
-            </Col>
-            <Col span={5}>
-              <div className="">
-                <BellOutlined
-                  style={{
-                    fontSize: "24px",
-                    color: "red",
-                    marginLeft: "200px",
-                  }}
-                />
-              </div>
-            </Col>
-            <Col span={2}>
-              <img className="imgaccount" src="/asset/img/ao2.jpg" alt="" />
-            </Col>
-            <Col className="" span={2}>
-              <p className="xc">xin chào</p>
-              <p className="name">Đào Minh Hùng</p>
-            </Col>
-          </Header>
+          <HeaderComponent />
           <Content style={{ marginLeft: "70px" }}>
             <Row>
               <Col span={24}>
@@ -238,9 +186,10 @@ const Themthietbi: React.FC = () => {
                           onChange={(value) =>
                             setDeviceData((prevState) => ({
                               ...prevState,
-                              hoatdongtb: value,
+                              loaitb: value,
                             }))
                           }
+                          style={{ width: 450 }}
                         >
                           <Select.Option value="Kiosk">Kiosk</Select.Option>
                           <Select.Option value="Display counter">
@@ -252,9 +201,11 @@ const Themthietbi: React.FC = () => {
 
                     <div>
                       <label>Tên đăng nhập</label>
-                      <Form.Item name="login">
+                      <Form.Item name="tendn">
                         <Input
                           className="input-chung"
+                          value={deviceData?.tendn}
+                          name="tendn"
                           // name="ketnoitb"
                           // value={deviceData.ketnoitb}
                           onChange={handleInputChange}
@@ -264,9 +215,11 @@ const Themthietbi: React.FC = () => {
 
                     <div>
                       <label>Mật khẩu</label>
-                      <Form.Item name="password">
+                      <Form.Item name="matkhau">
                         <Input
                           className="input-chung"
+                          value={deviceData?.matkhau}
+                          name="matkhau"
                           // name="dichvutb"
                           // value={deviceData.dichvutb}
                           onChange={handleInputChange}
@@ -277,13 +230,16 @@ const Themthietbi: React.FC = () => {
                 </Row>
                 <Row>
                   <Col span={24}>
-                    <label>Dịch vụ</label>
+                    <Row>
+                      <label>Dịch vụ</label>
+                    </Row>
+
                     <Select
                       allowClear
                       mode="multiple"
                       value={deviceData.dichvutb}
                       onChange={handleServiceChange}
-                      style={{ width: "50%" }}
+                      style={{ width: "100%" }}
                     >
                       <Select.Option value="Khám tim mạch">
                         Khám tim mạch
@@ -320,6 +276,7 @@ const Themthietbi: React.FC = () => {
                 <Button
                   style={{ marginLeft: "-150px" }}
                   className="btn-thietbi2"
+                  onClick={() => (window.location.href = "/thietbi")}
                 >
                   Hủy bỏ
                 </Button>

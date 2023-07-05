@@ -166,6 +166,19 @@
     background: #FF9138;
 }
 
+.card-dulieusider {
+    width: 353px;
+    height: 5px;
+    flex-shrink: 0;
+    padding: 10px;
+    margin: 5px;
+}
+
+.card-sider {
+    height: 83px;
+    flex-shrink: 0;
+}
+
 .input-dl {
     border-radius: 6px;
     background: var(--gray-gray-50, #EAEAEC);
@@ -342,6 +355,7 @@
     border: 1.5px solid var(--gray-gray-100, #D4D4D7);
     background: var(--white, #FFF);
 }
+
 
 
 
