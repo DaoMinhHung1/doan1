@@ -1,0 +1,85 @@
+.body {
+    width: 848px;
+    height: 810px;
+    flex-shrink: 0;
+
+}
+
+.container {
+    height: 100%;
+}
+
+.row {
+    height: 100%;
+}
+
+.col {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.box {
+    width: 810px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+.login {
+    display: flex;
+    width: 400px;
+    height: 44px;
+    padding: 10px 12px;
+    /* Giảm padding ở hai cạnh ngang */
+    align-items: center;
+    gap: 10px;
+    border-radius: 8px;
+    border: 1.5px solid var(--gray-gray-100, #D4D4D7);
+    background: var(--white, #FFF);
+
+}
+
+.bg1 {
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg, #F6F6F6);
+}
+
+/* 
+.bg2 {
+    width: 100vw;
+    height: 100vh;
+    flex-shrink: 0;
+    background: var(--white, #FFF);
+} */
+
+.forgetpass {
+    color: var(--red, #E73F3F);
+    /* 14/14 Reg */
+    font-size: 14px;
+    font-family: Nunito;
+    line-height: 21px;
+}
+
+.buttonlogin {
+    display: flex;
+    width: 162px;
+    height: 40px;
+    padding: 10px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-left: 100px;
+    margin-top: 50px;
+    border-radius: 8px;
+    background: var(--orange-orange-400, #FF9138);
+    /* down */
+    box-shadow: 0px 0px 6px 0px #E7E9F2;
+}
+
+.error-message {
+    color: red;
+}
