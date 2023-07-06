@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Button, Col, Form, Input, Layout, Row, Table } from "antd";
 
@@ -25,9 +25,21 @@ interface OrderNumbers {
   isActive: boolean;
 }
 const Quanlycapso: React.FC = () => {
-  //Xem chi tiết
-  const history = useHistory();
+  //Load dữ liệu user
+  const [loginData, setLoginData] = useState<{
+    name: string;
+  } | null>(null);
 
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("userData");
+    if (storedUserData) {
+      const userData = JSON.parse(storedUserData);
+      setLoginData(userData);
+    }
+    console.log(storedUserData);
+  }, []);
+
+  const history = useHistory();
   const ordernumbers = useSelector(
     (state: RootState) => state.ordernumbers.orderNumbers
   );
@@ -44,7 +56,7 @@ const Quanlycapso: React.FC = () => {
 
     fetchData();
   }, [dispatch]);
-
+  //Xem chi tiết
   const handleViewDetails = (orderID: string) => {
     const selectedOrder = ordernumbers.find((orders) => orders.id === orderID);
     if (selectedOrder) {
@@ -63,8 +75,11 @@ const Quanlycapso: React.FC = () => {
     },
     {
       title: "Tên khách hàng",
-      dataIndex: "namekh",
-      key: "namekh",
+      dataIndex: "name",
+      key: "name",
+      render: (_text: any, record: OrderNumbers) => (
+        <span>{record.namekh || loginData?.name}</span>
+      ),
       width: 200,
     },
     {

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Form, Input, Button, Row, Col, Space } from "antd";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 
 import "../StylePages/Forget.css";
@@ -9,16 +9,7 @@ const Forget = () => {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [inputError, setInputError] = useState(false);
-  const [oobCode, setOobCode] = useState<string | null>(null);
-  const history = useHistory();
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const oobCodeParam = searchParams.get("oobCode");
-    if (oobCodeParam && oobCodeParam !== "") {
-      setOobCode(oobCodeParam);
-    }
-  }, []);
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     setErrorMessage("");
@@ -26,22 +17,20 @@ const Forget = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("đây là oob", oobCode);
-
     if (!email) {
       setErrorMessage("Vui lòng nhập địa chỉ email!");
       setInputError(true);
       return;
     }
+
     try {
       const auth = getAuth();
       const actionCodeSettings = {
-        url: `${window.location.origin}/forget/newpass?oobCode=${
-          oobCode || null
-        }`,
+        url: `${
+          window.location.origin
+        }/forget/newpass?email=${encodeURIComponent(email)}`,
         handleCodeInApp: true,
       };
-      console.log(actionCodeSettings);
 
       await sendPasswordResetEmail(auth, email, actionCodeSettings);
 
@@ -50,8 +39,8 @@ const Forget = () => {
       );
       setInputError(false);
 
-      // Chuyển hướng đến trang nhập mật khẩu mới và truyền email qua URL
-      history.push(`/forget/newpass?email=${encodeURIComponent(email)}`);
+      // Chuyển hướng đến trang New Password và truyền email qua URL
+      // history.push(`/forget/newpass?email=${encodeURIComponent(email)}`);
     } catch (error) {
       setErrorMessage(
         "Yêu cầu đặt lại mật khẩu không thành công. Vui lòng kiểm tra lại địa chỉ email."

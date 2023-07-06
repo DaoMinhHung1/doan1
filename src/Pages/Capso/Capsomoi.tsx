@@ -8,6 +8,12 @@ import { v4 as uuidv4 } from "uuid";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/rootReducer";
+import { ThunkDispatch } from "redux-thunk";
+import { fetchServices } from "../../redux/servicesSlice";
+import { useDispatch } from "react-redux";
+import { AnyAction } from "redux";
 
 interface OrderNumbers {
   STT: string;
@@ -39,6 +45,23 @@ const Capsomoi: React.FC = () => {
   });
   const [isOrderActive, setIsOrderActive] = useState(false);
 
+  const servicesData = useSelector(
+    (state: RootState) => state.servies.services
+  );
+
+  const dispatch: ThunkDispatch<RootState, unknown, AnyAction> = useDispatch();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await dispatch(fetchServices());
+      } catch (error) {
+        console.error("Error fetching device data:", error);
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
+
   useEffect(() => {
     localStorage.setItem("currentNumber", currentNumber.toString());
   }, [currentNumber]);
@@ -67,12 +90,7 @@ const Capsomoi: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [isOrderActive]);
 
-  const generateRandomNumber = (): string => {
-    const randomNumber = String(currentNumber).padStart(7, "0");
-    setCurrentNumber((prevNumber) => prevNumber + 1);
-    return randomNumber;
-  };
-
+ 
   const handleSelectChange = (value: string) => {
     setOrderNumbers((prevState) => ({
       ...prevState,
@@ -89,29 +107,42 @@ const Capsomoi: React.FC = () => {
 
   const handleAddNumber = async () => {
     try {
+      // Tạo mới dữ liệu cấp số
       const db = getFirestore();
       const orderNumbersCollection = collection(db, "ordernumbers");
 
+      // Tạo ngày hiện tại và ngày kết thúc (5 ngày sau)
       const currentDate = new Date();
       const endDate = new Date(currentDate);
       endDate.setDate(endDate.getDate() + 5);
 
-      const newOrderData = {
-        id: uuidv4(),
-        STT: generateRandomNumber(),
-        namekh: orderNumbers.namekh,
-        namedv: orderNumbers.namedv,
-        startdate: formatDate(currentDate),
-        enddate: formatDate(endDate),
-        provide: orderNumbers.provide,
-        isActive: true,
-      };
+      // Tìm dịch vụ tương ứng với tên dịch vụ (namedv) được chọn
+      const selectedService = servicesData.find(
+        (service) => service.namedv === orderNumbers.namedv
+      );
 
-      await addDoc(orderNumbersCollection, newOrderData);
+      if (selectedService) {
+        const newOrderData = {
+          id: uuidv4(),
+          STT: selectedService.maso, // Sử dụng mã dịch vụ (maso) như STT
+          namekh: orderNumbers.namekh,
+          namedv: orderNumbers.namedv,
+          startdate: formatDate(currentDate),
+          enddate: formatDate(endDate),
+          provide: orderNumbers.provide,
+          isActive: true,
+        };
 
-      message.success("Thêm dịch vụ thành công!");
-      setIsOrderActive(true);
-      showModal(newOrderData);
+        // Thêm dữ liệu cấp số vào Firestore
+        await addDoc(orderNumbersCollection, newOrderData);
+
+        // Hiển thị modal và cập nhật trạng thái
+        message.success("Thêm dịch vụ thành công!");
+        setIsOrderActive(true);
+        showModal(newOrderData);
+      } else {
+        message.error("Không tìm thấy dịch vụ");
+      }
     } catch (error) {
       console.error("Lỗi khi thêm dịch vụ:", error);
       message.error("Lỗi khi thêm dịch vụ");

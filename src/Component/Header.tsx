@@ -36,7 +36,7 @@ const HeaderComponent: React.FC = () => {
           <img
             style={{ marginTop: "20px" }}
             className="imgaccount"
-            src="/asset/img/ao2.jpg"
+            src={userData?.avatar}
             alt=""
           />
         </Col>

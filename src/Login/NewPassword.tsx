@@ -1,27 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Row, Col } from "antd";
-import { useParams, useLocation, useHistory } from "react-router-dom";
+import { Form, Input, Button, Row, Col, message } from "antd";
+import { useLocation, useParams } from "react-router-dom";
 import { getAuth, confirmPasswordReset } from "firebase/auth";
 
 interface RouteParams {
   oobCode: string;
 }
+
 const NewPass = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [inputError, setInputError] = useState(false);
-  const { search } = useLocation();
-  const history = useHistory();
-  const { oobCode } = useParams<RouteParams>();
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(search);
-    const oobCodeParam = searchParams.get("oobCode");
-    if (oobCodeParam && oobCodeParam !== "") {
-      history.replace(`/forget/newpass/${oobCodeParam}`);
-    }
-  }, [search, history]);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const oobCode = searchParams.get("oobCode");
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
@@ -50,11 +43,18 @@ const NewPass = () => {
       return;
     }
 
+    if (!oobCode) {
+      setErrorMessage("Mã oobCode không tồn tại!");
+      setInputError(true);
+      return;
+    }
+
     try {
       const auth = getAuth();
       await confirmPasswordReset(auth, oobCode, password);
 
       setErrorMessage("Đặt lại mật khẩu thành công!");
+      message.success("Đặt lại mật khẩu thành công");
       setInputError(false);
     } catch (error) {
       console.log(error);
@@ -62,6 +62,10 @@ const NewPass = () => {
       setInputError(true);
     }
   };
+
+  useEffect(() => {
+    console.log(oobCode); // In giá trị oobCode ra màn hình
+  }, [oobCode]);
 
   return (
     <div>

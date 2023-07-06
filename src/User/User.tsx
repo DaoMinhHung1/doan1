@@ -4,6 +4,7 @@ import "../StylePages/Home.css";
 import Sider from "antd/es/layout/Sider";
 import { BellOutlined, CameraOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
+import SiderComponent from "../Component/SiderComponent";
 const { Content, Header } = Layout;
 
 const User: React.FC = () => {
@@ -15,57 +16,7 @@ const User: React.FC = () => {
   console.log(userData);
   return (
     <Layout>
-      <Sider
-        className="menubar"
-        width={200}
-        style={{ backgroundColor: "Menu" }}
-      >
-        <Menu theme="light" className="itembar">
-          <img className="alta" src="/asset/img/logoalta.png" alt="" />
-          <Menu.Item
-            className="menu-item"
-            onClick={() => {
-              window.location.href = "/dashboard";
-            }}
-          >
-            Dashboard
-          </Menu.Item>
-          <Menu.Item
-            className="menu-item"
-            onClick={() => {
-              window.location.href = "/thietbi";
-            }}
-          >
-            Thiết bị
-          </Menu.Item>
-          <Menu.Item
-            className="menu-item"
-            onClick={() => {
-              window.location.href = "/dichvu";
-            }}
-          >
-            Dịch vụ
-          </Menu.Item>
-          <Menu.Item
-            className="menu-item"
-            onClick={() => {
-              window.location.href = "/capso";
-            }}
-          >
-            Cấp số
-          </Menu.Item>
-          <Menu.Item
-            className="menu-item"
-            onClick={() => {
-              window.location.href = "/baocao";
-            }}
-          >
-            Báo cáo
-          </Menu.Item>
-          <Menu.Item className="menu-item">Cài đặt hệ thống</Menu.Item>
-          <Menu.Item className="menu-item">Đăng xuất</Menu.Item>
-        </Menu>
-      </Sider>
+      <SiderComponent />
       <Layout>
         <Header className="account bgheader">
           <Col span={15}>

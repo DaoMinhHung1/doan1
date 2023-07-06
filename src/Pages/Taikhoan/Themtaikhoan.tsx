@@ -13,7 +13,7 @@ import {
   message,
 } from "antd";
 
-import {  UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
 import { Content } from "antd/es/layout/layout";
 import { getDatabase, push, ref, set, update } from "firebase/database";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
@@ -67,6 +67,34 @@ const Themtaikhoan: React.FC = () => {
 
   const handleAddAccount = async () => {
     try {
+      // Kiểm tra các trường bắt buộc không được để trống
+      if (
+        !accountData.name ||
+        !accountData.namedn ||
+        !accountData.phone ||
+        !accountData.email ||
+        !accountData.password ||
+        !accountData.confirmPassword ||
+        !selectedRole ||
+        !selectedCondition
+      ) {
+        message.error("Vui lòng nhập đầy đủ thông tin tài khoản!");
+        return;
+      }
+
+      // Kiểm tra email và password đã được nhập
+      if (!accountData.email || !accountData.password) {
+        message.error("Vui lòng nhập email và mật khẩu!");
+        return;
+      }
+
+      // Kiểm tra mật khẩu và xác nhận mật khẩu
+      if (accountData.password !== accountData.confirmPassword) {
+        message.error("Mật khẩu nhập không giống nhau!");
+        return;
+      }
+
+      // Tiếp tục xử lý thêm tài khoản...
       const auth = getAuth();
       const { email, password } = accountData;
 
@@ -140,7 +168,9 @@ const Themtaikhoan: React.FC = () => {
             </Row>
             <Row>
               <Card className="card-1">
-                <h1 className="titletopbar">Thông tin chi tiết</h1>
+                <h1 style={{ marginTop: "-10px" }} className="titletopbar">
+                  Thông tin chi tiết
+                </h1>
                 <Row>
                   <Col span={12}>
                     <div>
@@ -183,6 +213,7 @@ const Themtaikhoan: React.FC = () => {
                       <label>Vai trò</label>
                       <Form.Item name="role">
                         <Select
+                          style={{ width: "450px" }}
                           className="role"
                           value={selectedRole}
                           onChange={(value) => setSelectedRole(value)}
@@ -234,6 +265,7 @@ const Themtaikhoan: React.FC = () => {
                       <label>Tình trạng</label>
                       <Form.Item name="condition">
                         <Select
+                          style={{ width: "450px" }}
                           className="condition"
                           value={selectedCondition}
                           onChange={(value) => setSelectedCondition(value)}
@@ -268,7 +300,7 @@ const Themtaikhoan: React.FC = () => {
                 </Row>
               </Card>
             </Row>
-            <Row>
+            <Row style={{ marginTop: "-10px" }}>
               <Content
                 style={{
                   display: "flex",

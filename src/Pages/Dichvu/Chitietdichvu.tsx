@@ -115,7 +115,7 @@ const Chitietdichvu: React.FC = () => {
                         <label className="chu " htmlFor="">
                           Dịch vụ sử dụng
                         </label>
-                        <p>Khám tim mạch</p>
+                        <p>{service?.namedv}</p>
                       </Col>
                     </Row>
                   </Card>
@@ -168,7 +168,6 @@ const Chitietdichvu: React.FC = () => {
             </Content>
           </Layout>
         </Content>
-        <Footer style={{ textAlign: "center" }}>Your Footer Content</Footer>
       </Layout>
     </Layout>
   );
