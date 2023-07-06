@@ -9,12 +9,12 @@ import { RootState } from "../../redux/rootReducer";
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import { useDispatch } from "react-redux";
-import { fetchOrderNumbers } from "../../redux/ordernumbersSlice";
 import { Option } from "antd/es/mentions";
 import { DatePicker } from "antd";
 import { Form } from "antd";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
+import { fetchServices } from "../../redux/servicesSlice";
 
 const { Footer } = Layout;
 const { RangePicker } = DatePicker;
@@ -23,15 +23,15 @@ const Chitietdichvu: React.FC = () => {
   const location = useLocation();
   const service = location.state?.service;
 
-  const ordernumbers = useSelector(
-    (state: RootState) => state.ordernumbers.orderNumbers
+  const servicesData = useSelector(
+    (state: RootState) => state.servies.services
   );
 
   const dispatch: ThunkDispatch<RootState, unknown, AnyAction> = useDispatch();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await dispatch(fetchOrderNumbers());
+        await dispatch(fetchServices());
       } catch (error) {
         console.error("Error fetching device data:", error);
       }
@@ -45,19 +45,14 @@ const Chitietdichvu: React.FC = () => {
   const columns = [
     {
       title: "Số thứ tự",
-      dataIndex: "STT",
-      key: "STT",
+      dataIndex: "maso",
+      key: "maso",
       width: 350,
     },
     {
       title: "Trạng thái",
-      dataIndex: "isActive",
-      key: "isActive",
-      render: (isActive: boolean) => (
-        <span style={{ color: isActive ? "green" : "red" }}>
-          {isActive ? "Hoạt động" : "Bỏ qua"}
-        </span>
-      ),
+      dataIndex: "hoatdongdv",
+      key: "hoatdongdv",
       width: 400,
     },
   ];
@@ -160,7 +155,7 @@ const Chitietdichvu: React.FC = () => {
                     <Row style={{ marginTop: "20px" }}>
                       <Table
                         columns={columns}
-                        dataSource={ordernumbers}
+                        dataSource={servicesData}
                         pagination={{
                           pageSize: 4,
                           pageSizeOptions: ["4", "8", "12"],

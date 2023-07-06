@@ -9,6 +9,7 @@ import {
   Input,
   Layout,
   Row,
+  Select,
   message,
 } from "antd";
 
@@ -25,7 +26,23 @@ import {
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
 
+interface Services {
+  madv: string;
+  namedv: string;
+  dessdv: string;
+  hoatdongdv: string;
+  maso: string;
+  id: string;
+}
 const Capnhatdichvu: React.FC = () => {
+  const [serviceData, setSeviceData] = useState<Services>({
+    madv: "",
+    namedv: "",
+    dessdv: "",
+    hoatdongdv: "",
+    maso: "",
+    id: "",
+  });
   const [checked, setChecked] = useState<number | null>(null);
   const handleCheckboxChange = (index: number) => {
     setChecked(index);
@@ -43,9 +60,11 @@ const Capnhatdichvu: React.FC = () => {
     setUpdatedService((prevState: any) => ({ ...prevState, madv: value }));
   };
 
-  const handleNamedvChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setUpdatedService((prevState: any) => ({ ...prevState, namedv: value }));
+  const handleNamedvChange = (value: string) => {
+    setUpdatedService((prevState: any) => ({
+      ...prevState,
+      namedv: value,
+    }));
   };
 
   const handleDessdvChange = (
@@ -56,15 +75,15 @@ const Capnhatdichvu: React.FC = () => {
   };
 
   useEffect(() => {
-    if (service && service.id) {
-      const serviceDocRef = doc(firestore, "services", service.id);
+    if (service && service.maso) {
+      const serviceDocRef = doc(firestore, "services", service.maso);
       console.log(serviceDocRef);
 
       onSnapshot(serviceDocRef, (docSnapshot) => {
         const data = docSnapshot.data();
         if (data) {
           // Lấy ID từ trường dữ liệu và cập nhật vào updatedService
-          const idFromData = data.id;
+          const idFromData = data.maso;
           setUpdatedService((prevState: any) => ({
             ...prevState,
             ...data,
@@ -80,21 +99,18 @@ const Capnhatdichvu: React.FC = () => {
       const serviceCollectionRef = collection(firestore, "services");
       const querySnapshot = await getDocs(serviceCollectionRef);
 
-      // Tìm tài liệu trong collection "services" có trường dữ liệu id trùng khớp với updatedService.id
       const matchingDocument = querySnapshot.docs.find(
-        (doc) => doc.data().id === updatedService.id
+        (doc) => doc.data().maso === updatedService.maso
       );
 
       if (matchingDocument) {
-        // Tạo một đối tượng chứa các trường dữ liệu cần cập nhật
         const updates = {
           madv: updatedService.madv,
-          namedv: updatedService.namedv,
+          namedv: updatedService.namedv, // Update namedv field
           dessdv: updatedService.dessdv,
           hoatdongdv: updatedService.hoatdongdv,
         };
 
-        // Cập nhật dữ liệu của dịch vụ trong Firestore
         await updateDoc(matchingDocument.ref, updates);
         message.success("Cập nhật dịch vụ thành công!");
       } else {
@@ -103,7 +119,6 @@ const Capnhatdichvu: React.FC = () => {
     } catch (error) {
       message.error("Cập nhật dịch vụ thất bại!");
       console.log(error);
-      // Xử lý lỗi nếu cần thiết
     }
   };
 
@@ -141,12 +156,25 @@ const Capnhatdichvu: React.FC = () => {
                     <div style={{ marginTop: "30px" }}>
                       <label>Tên dịch vụ</label>
                       <Form.Item>
-                        <Input
-                          name="namedv"
-                          className="input-chung"
+                        <Select
+                          style={{ width: "450px" }}
+                          className="select-chung"
                           defaultValue={service?.namedv}
                           onChange={handleNamedvChange}
-                        />
+                        >
+                          <Select.Option value="Khám tim mạch">
+                            Khám tim mạch
+                          </Select.Option>
+                          <Select.Option value="Khám sản - Phụ khoa">
+                            Khám sản - Phụ khoa
+                          </Select.Option>
+                          <Select.Option value="Khám răng hàm mặt">
+                            Khám răng hàm mặt
+                          </Select.Option>
+                          <Select.Option value="Khám tai mũi họng">
+                            Khám tai mũi họng
+                          </Select.Option>
+                        </Select>
                       </Form.Item>
                     </div>
                   </Col>

@@ -6,6 +6,7 @@ interface ServiceData {
   namedv: string;
   motadv: number;
   hoatdongdv: string;
+  maso: string;
   id: string;
 }
 

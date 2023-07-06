@@ -20,6 +20,7 @@ interface ServiceData {
   namedv: string;
   motadv: number;
   hoatdongdv: string;
+  maso: string;
   id: string;
 }
 
@@ -41,11 +42,17 @@ const Quanlydichvu: React.FC = () => {
 
     fetchData();
   }, [dispatch]);
+  const sortedServices = [...servicesData];
+  sortedServices.sort((a, b) => {
+    const maDV1 = parseInt(a.madv.slice(2)); // Lấy phần số từ chuỗi "DV01"
+    const maDV2 = parseInt(b.madv.slice(2)); // Lấy phần số từ chuỗi "DV02"
+    return maDV1 - maDV2;
+  });
 
   //nút nhấn chi tiết lưu qua URL
   const handleViewDetails = (serviceID: string) => {
     const selectedService = servicesData.find(
-      (service) => service.id === serviceID
+      (service) => service.maso === serviceID
     );
     if (selectedService) {
       console.log("Selected service:", selectedService);
@@ -56,7 +63,7 @@ const Quanlydichvu: React.FC = () => {
   };
   const handleUpdate = (serviceID: string) => {
     const selectedService = servicesData.find(
-      (service) => service.id === serviceID
+      (service) => service.maso === serviceID
     );
     if (selectedService) {
       console.log("Selected device:", selectedService);
@@ -100,7 +107,9 @@ const Quanlydichvu: React.FC = () => {
       width: 150,
       render: (_text: any, record: ServiceData) => (
         <>
-          <Button onClick={() => handleViewDetails(record.id)}>Chi tiết</Button>
+          <Button onClick={() => handleViewDetails(record.maso)}>
+            Chi tiết
+          </Button>
         </>
       ),
     },
@@ -111,7 +120,7 @@ const Quanlydichvu: React.FC = () => {
       width: 150,
       render: (_text: any, record: ServiceData) => (
         <>
-          <Button onClick={() => handleUpdate(record.id)}>Cập nhật</Button>
+          <Button onClick={() => handleUpdate(record.maso)}>Cập nhật</Button>
         </>
       ),
     },
@@ -164,7 +173,7 @@ const Quanlydichvu: React.FC = () => {
                     <div style={{ marginBottom: 16 }}></div>
                     <Table<ServiceData>
                       columns={columns}
-                      dataSource={servicesData}
+                      dataSource={sortedServices}
                       pagination={{
                         pageSize: 5,
                         pageSizeOptions: ["5", "10", "15"],

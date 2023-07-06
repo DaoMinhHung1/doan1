@@ -31,9 +31,12 @@ interface DeviceData {
   matb: string;
   nametb: string;
   addresstb: string;
+  loaitb: string;
+  dichvutb: string[];
   hoatdongtb: string;
   ketnoitb: string;
-  dichvutb: string;
+  tendn: string;
+  matkhau: string;
   id: string;
 }
 
@@ -42,9 +45,12 @@ const Capnhatthietbi: React.FC = () => {
     matb: "",
     nametb: "",
     addresstb: "",
+    loaitb: "",
+    dichvutb: [],
     hoatdongtb: "",
     ketnoitb: "",
-    dichvutb: "",
+    tendn: "",
+    matkhau: "",
     id: "",
   });
 
@@ -63,7 +69,19 @@ const Capnhatthietbi: React.FC = () => {
     const { value } = event.target;
     setUpdatedDevice((prevState: any) => ({ ...prevState, nametb: value }));
   };
+  const handleLoaitbChange = (value: string) => {
+    setUpdatedDevice((prevState: any) => ({
+      ...prevState,
+      loaitb: value,
+    }));
+  };
 
+  const handleDichvutbChange = (value: string) => {
+    setUpdatedDevice((prevState: any) => ({
+      ...prevState,
+      dichvutb: value,
+    }));
+  };
   const handleAddresstbChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -107,6 +125,7 @@ const Capnhatthietbi: React.FC = () => {
           matb: updatedDevice.matb,
           nametb: updatedDevice.nametb,
           addresstb: updatedDevice.addresstb,
+          loaitb: updatedDevice.loaitb,
           dichvutb: updatedDevice.dichvutb,
           hoatdongtb: updatedDevice.hoatdongtb,
         };
@@ -183,12 +202,7 @@ const Capnhatthietbi: React.FC = () => {
                         <Select
                           className=""
                           defaultValue={device.loaitb}
-                          onChange={(value) =>
-                            setDeviceData((prevState) => ({
-                              ...prevState,
-                              hoatdongtb: value,
-                            }))
-                          }
+                          onChange={handleLoaitbChange}
                         >
                           <Select.Option value="Kiosk">Kiosk</Select.Option>
                           <Select.Option value="Display counter">
@@ -228,6 +242,7 @@ const Capnhatthietbi: React.FC = () => {
                         mode="multiple"
                         defaultValue={device.dichvutb}
                         style={{ width: "100%" }}
+                        onChange={handleDichvutbChange}
                       >
                         <Option value="Zhejianggggg">Khám tim mạch</Option>
                         <Option value="Khám sản phụ khoa">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Button,
@@ -9,20 +9,27 @@ import {
   Input,
   Layout,
   Row,
+  Select,
   message,
 } from "antd";
 
 import { Content } from "antd/es/layout/layout";
-import { v4 as uuidv4 } from "uuid";
-import { addDoc, collection, getFirestore } from "firebase/firestore";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
+import {
+  addDoc,
+  collection,
+  doc,
+  getFirestore,
+  updateDoc,
+} from "firebase/firestore";
 
 interface Services {
   madv: string;
   namedv: string;
   dessdv: string;
   hoatdongdv: string;
+  maso: string;
   id: string;
 }
 const Themdichvu: React.FC = () => {
@@ -30,20 +37,45 @@ const Themdichvu: React.FC = () => {
     madv: "",
     namedv: "",
     dessdv: "",
-    hoatdongdv: "",
+    hoatdongdv: "Hoạt động",
+    maso: "",
     id: "",
   });
 
   const [checked, setChecked] = useState<number | null>(null);
+  const [nextMaso, setNextMaso] = useState<number | null>(null);
+  const [addedDocId, setAddedDocId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedMaso = localStorage.getItem("maso");
+    if (storedMaso) {
+      setNextMaso(parseInt(storedMaso, 10) + 1);
+    } else {
+      setNextMaso(2000000);
+    }
+  }, []);
 
   const handleCheckboxChange = (index: number) => {
     setChecked(index);
+
+    if (index === 1) {
+      setServiceData((prevState) => ({ ...prevState, maso: "0001 - 9999" }));
+    } else {
+      setServiceData((prevState) => ({ ...prevState, maso: "" }));
+    }
+  };
+  const handleSelectChange = (value: string) => {
+    setServiceData((prevState) => ({
+      ...prevState,
+      namedv: value,
+    }));
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setServiceData((prevState) => ({ ...prevState, [name]: value }));
   };
+
   const handleInputAreaChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
@@ -51,32 +83,76 @@ const Themdichvu: React.FC = () => {
     setServiceData((prevState) => ({ ...prevState, [name]: value }));
   };
 
+  useEffect(() => {
+    if (addedDocId) {
+      setServiceData((prevState) => ({
+        ...prevState,
+        id: addedDocId,
+      }));
+    }
+  }, [addedDocId]);
+
   const handleAddService = async () => {
     try {
       const db = getFirestore();
       const servicesCollection = collection(db, "services");
 
-      const newID = uuidv4();
+      let maso = "";
+      if (checked === 1) {
+        if (nextMaso !== null) {
+          maso = nextMaso.toString();
+          setNextMaso(nextMaso + 1);
+          localStorage.setItem("maso", nextMaso.toString());
+        }
+      }
 
-      const serviceWithID = { ...serviceData, id: newID };
+      const serviceWithID = { ...serviceData, maso };
 
-      await addDoc(servicesCollection, serviceWithID);
+      const addedDocRef = await addDoc(servicesCollection, serviceWithID);
+      const addedDocId = addedDocRef.id;
 
       console.log("Thêm dịch vụ thành công");
       message.success("Thêm dịch vụ thành công!");
 
-      setServiceData({
-        madv: "",
-        namedv: "",
-        dessdv: "",
-        hoatdongdv: "",
-        id: "",
-      });
+      //Set thời gian bỏ qua sau 5g chiều
+      const now = new Date();
+      const targetTime = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        17,
+        0,
+        0
+      ); // Đặt giờ 17:00 PM
+      const timeDiff = targetTime.getTime() - now.getTime();
+
+      if (timeDiff > 0) {
+        const timer = setTimeout(async () => {
+          const updatedService = { hoatdongdv: "Bỏ qua" };
+          await updateDoc(doc(servicesCollection, addedDocId), updatedService);
+          console.log(addedDocId);
+          console.log("Đã chuyển đổi trạng thái dịch vụ thành 'Bỏ qua'");
+          message.success("Đã chuyển đổi trạng thái dịch vụ thành 'Bỏ qua'");
+
+          // Cập nhật trạng thái dịch vụ trong React state
+          setServiceData((prevState) => ({
+            ...prevState,
+            hoatdongdv: "Bỏ qua",
+          }));
+        }, timeDiff);
+
+        return () => clearTimeout(timer);
+      } else {
+        // Đã qua thời gian cần chờ, không cần cập nhật trạng thái
+      }
+      //
     } catch (error) {
       console.error("Lỗi khi thêm dịch vụ:", error);
       message.error("Lỗi khi thêm dịch vụ");
     }
   };
+
+  console.log(addedDocId);
 
   return (
     <>
@@ -112,12 +188,24 @@ const Themdichvu: React.FC = () => {
                     <div style={{ marginTop: "30px" }}>
                       <label>Tên dịch vụ</label>
                       <Form.Item>
-                        <Input
-                          name="namedv"
-                          className="input-chung"
-                          value={serviceData.namedv}
-                          onChange={handleInputChange}
-                        />
+                        <Select
+                          style={{ width: "450px" }}
+                          className="select-chung"
+                          onChange={handleSelectChange}
+                        >
+                          <Select.Option value="Khám tim mạch">
+                            Khám tim mạch
+                          </Select.Option>
+                          <Select.Option value="Khám sản - Phụ khoa">
+                            Khám sản - Phụ khoa
+                          </Select.Option>
+                          <Select.Option value="Khám răng hàm mặt">
+                            Khám răng hàm mặt
+                          </Select.Option>
+                          <Select.Option value="Khám tai mũi họng">
+                            Khám tai mũi họng
+                          </Select.Option>
+                        </Select>
                       </Form.Item>
                     </div>
                   </Col>
