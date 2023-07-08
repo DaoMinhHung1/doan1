@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { Button, Col, Form, Input, Layout, Row, Table } from "antd";
 
-import { HomeOutlined } from "@ant-design/icons";
-import { Content } from "antd/es/layout/layout";
+import { FileAddOutlined, HomeOutlined } from "@ant-design/icons";
+import { Content, Header } from "antd/es/layout/layout";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
@@ -53,7 +53,6 @@ const Quanlycapso: React.FC = () => {
         console.error("Error fetching device data:", error);
       }
     };
-
     fetchData();
   }, [dispatch]);
   //Xem chi tiết
@@ -134,7 +133,12 @@ const Quanlycapso: React.FC = () => {
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Cấp số</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Layout style={{ marginTop: "-5px" }} className="center-content">
             <Content>
               <Row>
@@ -185,7 +189,7 @@ const Quanlycapso: React.FC = () => {
                   </div>
                 </Col>
                 <Col className="hang-table" span={2}>
-                  <HomeOutlined
+                  <FileAddOutlined
                     className="icon-thietbi"
                     onClick={() => {
                       window.location.href = "/capsomoi";

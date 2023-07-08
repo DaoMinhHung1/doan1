@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 
-import { Button, Col, Form, Input, Layout, Row, Table } from "antd";
+import { Button, Col, Form, Input, Layout, Row, Select, Table } from "antd";
 
 import { HomeOutlined } from "@ant-design/icons";
-import { Content } from "antd/es/layout/layout";
+import { Content, Header } from "antd/es/layout/layout";
 
 import { useHistory } from "react-router-dom";
 import { RootState } from "../../redux/rootReducer";
@@ -14,6 +14,7 @@ import { ThunkDispatch } from "redux-thunk";
 import { fetchServices } from "../../redux/servicesSlice";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
+import { DatePicker } from "antd";
 
 interface ServiceData {
   madv: string;
@@ -73,6 +74,8 @@ const Quanlydichvu: React.FC = () => {
       console.log("Không có dữ liệu thiết bị");
     }
   };
+
+  const { RangePicker } = DatePicker;
   // Table
   const columns = [
     {
@@ -131,7 +134,12 @@ const Quanlydichvu: React.FC = () => {
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Dịch vụ</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Layout style={{ marginTop: "-5px" }} className="center-content">
             <Content>
               <Row>
@@ -140,25 +148,31 @@ const Quanlydichvu: React.FC = () => {
                 </Col>
               </Row>
               <Row>
-                <Col span={7} style={{ marginLeft: "-20px", flex: 1 }}>
+                <Col
+                  span={7}
+                  style={{ marginLeft: "-20px", flex: 1, marginTop: "8px" }}
+                >
                   <div className="form-item">
                     <label>Trạng thái hoạt động</label>
                     <Form.Item name="email">
-                      <Input className="form-input" />
+                      <Select style={{ width: "300px" }}>
+                        <Select.Option value="Tất cả">Tất cả</Select.Option>
+                        <Select.Option value="Hoạt động">
+                          Hoạt động
+                        </Select.Option>
+                        <Select.Option value=" Không hoạt động">
+                          Không hoạt động
+                        </Select.Option>
+                      </Select>
                     </Form.Item>
                   </div>
                 </Col>
-                <Col span={10} style={{ marginLeft: "-20px", flex: 1 }}>
-                  <div className="form-thietbi form-item">
-                    <label>Chọn thời gian</label>
-                    <Form.Item name="email">
-                      <div className="">
-                        <Input className="form-input" />
-                      </div>
-                    </Form.Item>
-                  </div>
+                <Col span={5} style={{ marginLeft: "-20px", flex: 1 }}>
+                  <Form.Item name="range-picker" label="Chọn thời gian">
+                    <RangePicker />
+                  </Form.Item>
                 </Col>
-                <Col span={7} style={{ marginLeft: "-20px", flex: 1 }}>
+                <Col span={12} style={{ marginLeft: "230px", flex: 1 }}>
                   <div className="form-thietbi form-item">
                     <label>Từ khóa</label>
                     <Form.Item name="email">

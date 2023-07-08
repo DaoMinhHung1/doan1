@@ -13,7 +13,7 @@ import {
   message,
 } from "antd";
 
-import { Content } from "antd/es/layout/layout";
+import { Content, Header } from "antd/es/layout/layout";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
 import {
@@ -23,6 +23,8 @@ import {
   getFirestore,
   updateDoc,
 } from "firebase/firestore";
+import moment from "moment";
+import { serverTimestamp } from "firebase/database";
 
 interface Services {
   madv: string;
@@ -37,7 +39,7 @@ const Themdichvu: React.FC = () => {
     madv: "",
     namedv: "",
     dessdv: "",
-    hoatdongdv: "Hoạt động",
+    hoatdongdv: "Đang thực hiện",
     maso: "",
     id: "",
   });
@@ -45,6 +47,11 @@ const Themdichvu: React.FC = () => {
   const [checked, setChecked] = useState<number | null>(null);
   const [nextMaso, setNextMaso] = useState<number | null>(null);
   const [addedDocId, setAddedDocId] = useState<string | null>(null);
+
+  const storedUserData = localStorage.getItem("userData");
+  const [loginData, setLoginData] = useState<{
+    namedn: string;
+  } | null>(storedUserData ? JSON.parse(storedUserData) : null);
 
   useEffect(() => {
     const storedMaso = localStorage.getItem("maso");
@@ -64,6 +71,7 @@ const Themdichvu: React.FC = () => {
       setServiceData((prevState) => ({ ...prevState, maso: "" }));
     }
   };
+
   const handleSelectChange = (value: string) => {
     setServiceData((prevState) => ({
       ...prevState,
@@ -111,55 +119,67 @@ const Themdichvu: React.FC = () => {
       const addedDocRef = await addDoc(servicesCollection, serviceWithID);
       const addedDocId = addedDocRef.id;
 
+      // Ghi thông tin nhật ký người dùng
+      const userLog = {
+        email: loginData?.namedn,
+        thoiGian: moment().format("DD-MM-YYYY HH:mm:ss"),
+        hanhDong: "Thêm dịch vụ : " + serviceData.madv,
+        bang: "Dịch vụ",
+      };
+
+      const diaryCollection = collection(db, "diary");
+      await addDoc(diaryCollection, {
+        ...userLog,
+        createdAt: serverTimestamp(),
+      });
+
       console.log("Thêm dịch vụ thành công");
       message.success("Thêm dịch vụ thành công!");
 
-      //Set thời gian bỏ qua sau 5g chiều
-      const now = new Date();
-      const targetTime = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        17,
-        0,
-        0
-      ); // Đặt giờ 17:00 PM
-      const timeDiff = targetTime.getTime() - now.getTime();
-
-      if (timeDiff > 0) {
-        const timer = setTimeout(async () => {
-          const updatedService = { hoatdongdv: "Bỏ qua" };
-          await updateDoc(doc(servicesCollection, addedDocId), updatedService);
-          console.log(addedDocId);
-          console.log("Đã chuyển đổi trạng thái dịch vụ thành 'Bỏ qua'");
-          message.success("Đã chuyển đổi trạng thái dịch vụ thành 'Bỏ qua'");
-
-          // Cập nhật trạng thái dịch vụ trong React state
-          setServiceData((prevState) => ({
-            ...prevState,
-            hoatdongdv: "Bỏ qua",
-          }));
-        }, timeDiff);
-
-        return () => clearTimeout(timer);
-      } else {
-        // Đã qua thời gian cần chờ, không cần cập nhật trạng thái
-      }
-      //
+      setAddedDocId(addedDocId);
     } catch (error) {
       console.error("Lỗi khi thêm dịch vụ:", error);
       message.error("Lỗi khi thêm dịch vụ");
     }
   };
 
-  console.log(addedDocId);
+  useEffect(() => {
+    if (addedDocId) {
+      const now = moment();
+      const targetTime = moment().set({ hour: 17, minute: 30, second: 0 });
+      const timeDiff = targetTime.diff(now, "milliseconds");
+
+      if (timeDiff > 0) {
+        const timer = setTimeout(async () => {
+          const db = getFirestore();
+          const servicesCollection = collection(db, "services");
+          const updatedService = { hoatdongdv: "Đã hoàn thành" };
+          await updateDoc(doc(servicesCollection, addedDocId), updatedService);
+          console.log(addedDocId);
+
+          // Cập nhật trạng thái dịch vụ trong React state
+          setServiceData((prevState) => ({
+            ...prevState,
+            hoatdongdv: "Đã hoàn thành",
+          }));
+        }, timeDiff);
+
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [addedDocId]);
 
   return (
     <>
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Dịch vụ</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Content style={{ marginLeft: "70px" }}>
             <Row>
               <Col span={24}>

@@ -13,9 +13,10 @@ import {
   message,
 } from "antd";
 
-import { Content } from "antd/es/layout/layout";
+import { Content, Header } from "antd/es/layout/layout";
 import { useLocation } from "react-router-dom";
 import {
+  addDoc,
   collection,
   doc,
   getDocs,
@@ -25,6 +26,8 @@ import {
 } from "firebase/firestore";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
+import { serverTimestamp } from "firebase/database";
+import moment from "moment";
 
 interface Services {
   madv: string;
@@ -51,8 +54,10 @@ const Capnhatdichvu: React.FC = () => {
   const location = useLocation();
   const service = location.state?.service;
   const [updatedService, setUpdatedService] = useState(service);
-  console.log(updatedService);
-
+  const storedUserData = localStorage.getItem("userData");
+  const [loginData, setLoginData] = useState<{
+    namedn: string;
+  } | null>(storedUserData ? JSON.parse(storedUserData) : null);
   const firestore = getFirestore();
 
   const handleMadvChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,6 +117,20 @@ const Capnhatdichvu: React.FC = () => {
         };
 
         await updateDoc(matchingDocument.ref, updates);
+
+        // Ghi thông tin nhật ký người dùng
+        const userLog = {
+          email: loginData?.namedn,
+          thoiGian: moment().format("DD-MM-YYYY HH:mm:ss"),
+          hanhDong: "Cập nhật dịch vụ: " + updatedService.madv,
+          bang: "Dịch vụ",
+        };
+
+        const diaryCollection = collection(firestore, "diary");
+        await addDoc(diaryCollection, {
+          ...userLog,
+          createdAt: serverTimestamp(),
+        });
         message.success("Cập nhật dịch vụ thành công!");
       } else {
         message.error("Không tìm thấy dịch vụ để cập nhật!");
@@ -127,7 +146,12 @@ const Capnhatdichvu: React.FC = () => {
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Dịch vụ</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Content style={{ marginLeft: "70px" }}>
             <Row>
               <Col span={24}>

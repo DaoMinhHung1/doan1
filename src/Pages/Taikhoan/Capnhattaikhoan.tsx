@@ -12,7 +12,7 @@ import {
   message,
 } from "antd";
 
-import { Content } from "antd/es/layout/layout";
+import { Content, Header } from "antd/es/layout/layout";
 import { useLocation } from "react-router-dom";
 import { getDatabase, onValue, ref, update } from "firebase/database";
 import SiderComponent from "../../Component/SiderComponent";
@@ -118,7 +118,12 @@ const Capnhattaikhoan: React.FC = () => {
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Tài khoản</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Content style={{ marginLeft: "70px" }}>
             <Row>
               <Col span={24}>

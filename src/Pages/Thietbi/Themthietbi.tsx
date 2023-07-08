@@ -12,11 +12,13 @@ import {
   message,
 } from "antd";
 
-import { Content } from "antd/es/layout/layout";
+import { Content, Header } from "antd/es/layout/layout";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
+import moment from "moment";
+import { serverTimestamp } from "firebase/database";
 
 interface DeviceData {
   matb: string;
@@ -86,6 +88,20 @@ const Themthietbi: React.FC = () => {
           }; // Set hoatdongtb to "Hoạt động"
           await addDoc(devicesCollection, deviceWithID);
 
+          //Ghi lại hành động vào diary
+          const userLog = {
+            email: loginData?.namedn,
+            thoiGian: moment().format("DD-MM-YYYY HH:mm:ss"),
+            hanhDong: "Thêm thiết bị : " + deviceData.matb,
+            bang: "Thiet bi",
+          };
+
+          const diaryCollection = collection(db, "diary");
+          await addDoc(diaryCollection, {
+            ...userLog,
+            createdAt: serverTimestamp(),
+          });
+
           console.log("Thêm thiết bị thành công");
           message.success("Thêm thiết bị thành công!");
 
@@ -128,7 +144,12 @@ const Themthietbi: React.FC = () => {
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Thiết bị</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Content style={{ marginLeft: "70px" }}>
             <Row>
               <Col span={24}>

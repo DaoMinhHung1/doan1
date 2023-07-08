@@ -356,6 +356,13 @@
     background: var(--white, #FFF);
 }
 
+.icon-sider {
+    margin-right: 5px;
+}
+
+.sider {
+    height: 100vh;
+}
 
 
 

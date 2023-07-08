@@ -2,7 +2,7 @@ import React from "react";
 
 import { Col, Form, Input, Layout, Row, Table } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
-import { Content } from "antd/es/layout/layout";
+import { Content, Header } from "antd/es/layout/layout";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
 
@@ -86,7 +86,12 @@ const Danhsachcapsodangcho: React.FC = () => {
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Cấp số</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Layout style={{ marginTop: "-5px" }} className="center-content">
             <Content>
               <Row>

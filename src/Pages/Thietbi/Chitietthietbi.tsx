@@ -5,6 +5,7 @@ import { Content } from "antd/lib/layout/layout";
 import { useLocation } from "react-router-dom";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
+import { Header } from "antd/es/layout/layout";
 
 const Chitietthietbi: React.FC = () => {
   const location = useLocation();
@@ -18,7 +19,12 @@ const Chitietthietbi: React.FC = () => {
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Thiết bị</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Layout style={{ marginTop: "-5px" }} className="center-content">
             <Content>
               <Row>

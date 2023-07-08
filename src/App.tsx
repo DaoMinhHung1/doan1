@@ -20,15 +20,18 @@ import Capsomoi from "./Pages/Capso/Capsomoi";
 import Thongtincapso from "./Pages/Capso/Chitietcapso";
 import Danhsachcapsodangcho from "./Pages/Capso/Danhsachcsdangcho";
 import Danhsachcsdangsd from "./Pages/Capso/Danhsachcsdangsd";
-import Danhsachcsboqua from "./Pages/Capso/Danhsachcsboqua";
 import Chitietdichvu from "./Pages/Dichvu/Chitietdichvu";
-import Quanlytaikhoan from "./Pages/Taikhoan/Quanlytaikhoan";
-import Themtaikhoan from "./Pages/Taikhoan/Themtaikhoan";
-import Capnhattaikhoan from "./Pages/Taikhoan/Capnhattaikhoan";
 import User from "./User/User";
 import store from "./redux/rootReducer";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import Quanlybaocao from "./Pages/Baocao/Quanlybaocao";
+import Quanlybaocao from "./Pages/Baocao/Baocao";
+import Vaitro from "./Pages/Vaitro/Vaitro";
+import Quanlynguoidung from "./Pages/Caidathethong/Nhatkynguoidung";
+import Themvaitro from "./Pages/Vaitro/Themvaitro";
+import Capnhatvaitro from "./Pages/Vaitro/Capnhatvaitro";
+import Quanlytaikhoan from "./Pages/Taikhoan/Quanlytaikhoan";
+import Themtaikhoan from "./Pages/Taikhoan/Themtaikhoan";
+import Capnhattaikhoan from "./Pages/Taikhoan/Capnhattaikhoan";
 
 function App() {
   return (
@@ -64,14 +67,21 @@ function App() {
           <Route path="/chitietcs/:orderID" component={Thongtincapso} />
           <Route path="/danhsachcsdangcho" component={Danhsachcapsodangcho} />
           <Route path="/danhsachcsdangsd" component={Danhsachcsdangsd} />
-          <Route path="/danhsachcsboqua" component={Danhsachcsboqua} />
-          {/* Quản lý báo cáo */}
-          <Route path="/baocao" component={Quanlybaocao} />
 
           {/* Quản lý tài khoản */}
           <Route path="/taikhoan" component={Quanlytaikhoan} />
           <Route path="/themtaikhoan" component={Themtaikhoan} />
           <Route path="/capnhattaikhoan/:userId" component={Capnhattaikhoan} />
+
+          {/* Quản lý báo cáo */}
+          <Route path="/baocao" component={Quanlybaocao} />
+
+          {/* Cài đặt hệ thống */}
+          <Route path="/nhatkynguoidung" component={Quanlynguoidung} />
+          {/* Vai trò trong hệ thống */}
+          <Route path="/vaitro" component={Vaitro} />
+          <Route path="/themvaitro" component={Themvaitro} />
+          <Route path="/capnhatvaitro" component={Capnhatvaitro} />
         </Switch>
       </BrowserRouter>
     </Provider>

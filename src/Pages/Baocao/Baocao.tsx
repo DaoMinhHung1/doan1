@@ -1,13 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { Col, Form, Layout, Row, Table } from "antd";
 
-import { HomeOutlined } from "@ant-design/icons";
-import { Content } from "antd/es/layout/layout";
-import { getDatabase, onValue, ref } from "firebase/database";
+import { FileMarkdownOutlined } from "@ant-design/icons";
+import { Content, Header } from "antd/es/layout/layout";
 import { DatePicker } from "antd";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
+import { ThunkDispatch } from "redux-thunk";
+import { RootState } from "../../redux/rootReducer";
+import { AnyAction } from "redux";
+import { useDispatch } from "react-redux";
+import { fetchOrderNumbers } from "../../redux/ordernumbersSlice";
+import { useSelector } from "react-redux";
+import * as XLSX from "xlsx";
 
 const { RangePicker } = DatePicker;
 
@@ -18,33 +24,33 @@ interface OrderNumbers {
   startdate: string;
   enddate: string;
   provide: string;
-  uuid: string;
+  id: string;
   isActive: boolean;
 }
 const Quanlybaocao: React.FC = () => {
-  const [order, setOrder] = useState<OrderNumbers[]>([]);
-
+  const ordernumbers = useSelector(
+    (state: RootState) => state.ordernumbers.orderNumbers
+  );
+  const dispatch: ThunkDispatch<RootState, unknown, AnyAction> = useDispatch();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const db = getDatabase();
-        const orderRef = ref(db, "ordernumbers");
-
-        onValue(orderRef, (snapshot) => {
-          const data: OrderNumbers[] = [];
-          snapshot.forEach((childSnapshot) => {
-            const order = childSnapshot.val() as OrderNumbers;
-            data.push(order);
-          });
-          setOrder(data);
-        });
+        await dispatch(fetchOrderNumbers());
       } catch (error) {
-        console.error("Error fetching service data:", error);
+        console.error("Error fetching device data:", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [dispatch]);
+
+  //Down dữ liệu xuống Excel
+  const handleDownloadExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(ordernumbers);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách báo cáo");
+    XLSX.writeFile(workbook, "danh-sach-bao-cao.xlsx");
+  };
 
   // Table
   const columns = [
@@ -90,12 +96,17 @@ const Quanlybaocao: React.FC = () => {
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Báo cáo</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Layout style={{ marginTop: "-5px" }} className="center-content">
             <Content>
               <Row>
                 <Col span={24}>
-                  <h1 className="titletopbar">Danh sách dịch vụ</h1>
+                  <h1 className="titletopbar">Danh sách báo cáo</h1>
                 </Col>
               </Row>
               <Row>
@@ -111,16 +122,20 @@ const Quanlybaocao: React.FC = () => {
                 <Col span={22}>
                   <div>
                     <div style={{ marginBottom: 16 }}></div>
-                    <Table columns={columns} dataSource={order} />
+                    <Table<OrderNumbers>
+                      columns={columns}
+                      dataSource={ordernumbers}
+                      pagination={{
+                        pageSize: 5,
+                        pageSizeOptions: ["5", "10", "15"],
+                      }}
+                    />
                   </div>
                 </Col>
                 <Col className="hang-table" span={2}>
-                  <HomeOutlined
-                    className="icon-thietbi"
-                    onClick={() => {
-                      window.location.href = "/themdichvu";
-                    }}
-                  />
+                  <Col className="hang-table" span={2}>
+                    <FileMarkdownOutlined onClick={handleDownloadExcel} />
+                  </Col>
                 </Col>
               </Row>
             </Content>

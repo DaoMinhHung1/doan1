@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { Button, Card, Col, Layout, Modal, Row, Select, message } from "antd";
 
-import { Content } from "antd/es/layout/layout";
-import { getDatabase, ref, set } from "firebase/database";
+import { Content, Header } from "antd/es/layout/layout";
+import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import SiderComponent from "../../Component/SiderComponent";
@@ -39,6 +39,9 @@ const Capsomoi: React.FC = () => {
   });
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderNumbers | null>(null);
+  const [allocatedOrderNumbers, setAllocatedOrderNumbers] = useState<{
+    [namedv: string]: string[];
+  }>({});
   const [currentNumber, setCurrentNumber] = useState(() => {
     const storedNumber = localStorage.getItem("currentNumber");
     return storedNumber ? parseInt(storedNumber, 10) : 1;
@@ -48,6 +51,11 @@ const Capsomoi: React.FC = () => {
   const servicesData = useSelector(
     (state: RootState) => state.servies.services
   );
+
+  const storedUserData = localStorage.getItem("userData");
+  const [loginData, setLoginData] = useState<{
+    name: string;
+  } | null>(storedUserData ? JSON.parse(storedUserData) : null);
 
   const dispatch: ThunkDispatch<RootState, unknown, AnyAction> = useDispatch();
   useEffect(() => {
@@ -67,30 +75,22 @@ const Capsomoi: React.FC = () => {
   }, [currentNumber]);
 
   useEffect(() => {
-    const expireOrder = () => {
-      setIsOrderActive(false);
-      setCurrentNumber(1);
+    const checkClosingTime = () => {
+      const currentTime = moment();
+      const closingTime = moment().set({ hour: 17, minute: 30, second: 0 });
 
-      //Cập nhật trạng thái sau 24 tiếng
-      if (selectedOrder) {
-        const database = getDatabase();
-        const orderRef = ref(database, `ordernumbers/${selectedOrder.id}`);
-        set(orderRef, { isActive: false }) // Cập nhật trạng thái isActive thành false
-          .then(() => {
-            console.log("Trạng thái đã được cập nhật sau 24 tiếng");
-          })
-          .catch((error) => {
-            console.error("Lỗi khi cập nhật trạng thái:", error);
-          });
+      if (currentTime.isSameOrAfter(closingTime)) {
+        setIsOrderActive(false);
       }
     };
 
-    const timeoutId = setTimeout(expireOrder, 24 * 60 * 60 * 1000);
+    checkClosingTime();
 
-    return () => clearTimeout(timeoutId);
-  }, [isOrderActive]);
+    const intervalId = setInterval(checkClosingTime, 60000);
 
- 
+    return () => clearInterval(intervalId);
+  }, []);
+
   const handleSelectChange = (value: string) => {
     setOrderNumbers((prevState) => ({
       ...prevState,
@@ -99,50 +99,70 @@ const Capsomoi: React.FC = () => {
   };
 
   const formatDate = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${day}-${month}-${year}`;
+    const formattedDate = moment(date).format("DD-MM-YYYY");
+    return formattedDate;
+  };
+
+  const saveAllocatedNumbers = (namedv: string, numbers: string[]) => {
+    localStorage.setItem(namedv, JSON.stringify(numbers));
+  };
+
+  const getAllocatedNumbers = (namedv: string): string[] => {
+    const allocatedNumbers = localStorage.getItem(namedv);
+    return allocatedNumbers ? JSON.parse(allocatedNumbers) : [];
   };
 
   const handleAddNumber = async () => {
+    const selectedService = servicesData.find(
+      (service) => service.namedv === orderNumbers.namedv
+    );
+
+    if (!selectedService) {
+      message.error("Không tìm thấy dịch vụ");
+      return;
+    }
+
+    const { maso } = selectedService;
+
+    const allocatedNumbers = getAllocatedNumbers(orderNumbers.namedv);
+
+    if (allocatedNumbers.includes(maso)) {
+      message.error("Mã số đã được cấp trước đó");
+      return;
+    }
+
     try {
-      // Tạo mới dữ liệu cấp số
       const db = getFirestore();
       const orderNumbersCollection = collection(db, "ordernumbers");
 
-      // Tạo ngày hiện tại và ngày kết thúc (5 ngày sau)
       const currentDate = new Date();
       const endDate = new Date(currentDate);
       endDate.setDate(endDate.getDate() + 5);
 
-      // Tìm dịch vụ tương ứng với tên dịch vụ (namedv) được chọn
-      const selectedService = servicesData.find(
-        (service) => service.namedv === orderNumbers.namedv
-      );
+      const newOrderData = {
+        id: uuidv4(),
+        STT: maso,
+        namekh: loginData?.name || "",
+        namedv: orderNumbers.namedv,
+        startdate: formatDate(currentDate),
+        enddate: formatDate(endDate),
+        provide: orderNumbers.provide,
+        isActive: true,
+      };
 
-      if (selectedService) {
-        const newOrderData = {
-          id: uuidv4(),
-          STT: selectedService.maso, // Sử dụng mã dịch vụ (maso) như STT
-          namekh: orderNumbers.namekh,
-          namedv: orderNumbers.namedv,
-          startdate: formatDate(currentDate),
-          enddate: formatDate(endDate),
-          provide: orderNumbers.provide,
-          isActive: true,
-        };
+      await addDoc(orderNumbersCollection, newOrderData);
 
-        // Thêm dữ liệu cấp số vào Firestore
-        await addDoc(orderNumbersCollection, newOrderData);
+      message.success("Thêm dịch vụ thành công!");
+      setIsOrderActive(true);
+      showModal(newOrderData);
 
-        // Hiển thị modal và cập nhật trạng thái
-        message.success("Thêm dịch vụ thành công!");
-        setIsOrderActive(true);
-        showModal(newOrderData);
-      } else {
-        message.error("Không tìm thấy dịch vụ");
-      }
+      const updatedAllocatedNumbers = [...allocatedNumbers, maso];
+      saveAllocatedNumbers(orderNumbers.namedv, updatedAllocatedNumbers);
+
+      setAllocatedOrderNumbers((prevState) => ({
+        ...prevState,
+        [orderNumbers.namedv]: updatedAllocatedNumbers,
+      }));
     } catch (error) {
       console.error("Lỗi khi thêm dịch vụ:", error);
       message.error("Lỗi khi thêm dịch vụ");
@@ -164,7 +184,12 @@ const Capsomoi: React.FC = () => {
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Cấp số</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Content style={{ marginLeft: "70px" }}>
             <Row>
               <Col span={24}>
@@ -191,6 +216,7 @@ const Capsomoi: React.FC = () => {
                   style={{ width: "450px" }}
                   className="select-chung"
                   onChange={handleSelectChange}
+                  placeholder="Chọn dịch vụ"
                 >
                   <Select.Option value="Khám tim mạch">
                     Khám tim mạch

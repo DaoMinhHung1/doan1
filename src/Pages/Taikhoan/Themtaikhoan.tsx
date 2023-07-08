@@ -14,7 +14,7 @@ import {
 } from "antd";
 
 import { UploadOutlined } from "@ant-design/icons";
-import { Content } from "antd/es/layout/layout";
+import { Content, Header } from "antd/es/layout/layout";
 import { getDatabase, push, ref, set, update } from "firebase/database";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import {
@@ -159,7 +159,12 @@ const Themtaikhoan: React.FC = () => {
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Tài khoản</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Content style={{ marginLeft: "70px" }}>
             <Row>
               <Col span={24}>

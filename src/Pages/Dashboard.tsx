@@ -1,14 +1,68 @@
 import React, { useEffect, useState } from "react";
-import { Card, Col, Layout, Progress, Row } from "antd";
+import {
+  Card,
+  Col,
+  Layout,
+  Progress,
+  Row,
+  Form,
+  Select,
+  Menu,
+  Dropdown,
+} from "antd";
 import "../StylePages/Home.css";
-import { BellOutlined } from "@ant-design/icons";
+import { BellOutlined, CalendarOutlined } from "@ant-design/icons";
 import { Content, Header } from "antd/es/layout/layout";
 import SiderComponent from "../Component/SiderComponent";
 import CalendarComponent from "../Component/CaclendarComponent";
-
+import { Line } from "@ant-design/charts";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/rootReducer";
+import { ThunkDispatch } from "redux-thunk";
+import { AnyAction } from "redux";
+import { useDispatch } from "react-redux";
+import { fetchOrderNumbers } from "../redux/ordernumbersSlice";
 const { Sider } = Layout;
 
 const Home: React.FC = () => {
+  const ordernumbers = useSelector(
+    (state: RootState) => state.ordernumbers.orderNumbers
+  );
+  const dispatch: ThunkDispatch<RootState, unknown, AnyAction> = useDispatch();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await dispatch(fetchOrderNumbers());
+      } catch (error) {
+        console.error("Error fetching device data:", error);
+      }
+    };
+    fetchData();
+  }, [dispatch]);
+
+  const menu = (
+    <Menu
+      style={{ maxHeight: "200px", overflowY: "scroll", background: "#FFF2E7" }}
+    >
+      {ordernumbers.map((order) => (
+        <Menu.Item
+          key={order.id}
+          style={{
+            height: "50px",
+            width: "250px",
+            marginBottom: "15px",
+            marginTop: "5px",
+          }}
+        >
+          <div style={{ background: "white" }}>
+            <p>Người dùng: {order.namekh} </p>
+            <p>Thời gian nhận số: {order.enddate}</p>
+          </div>
+        </Menu.Item>
+      ))}
+    </Menu>
+  );
+
   //Tên đăng nhập
   const [userData, setUserData] = useState<any>(null);
 
@@ -19,6 +73,33 @@ const Home: React.FC = () => {
       setUserData(JSON.parse(storedUserData));
     }
   }, []);
+
+  const data = [
+    { month: "1", value: 100 },
+    { month: "2", value: 200 },
+    { month: "3", value: 150 },
+    { month: "4", value: 350 },
+    { month: "5", value: 250 },
+    { month: "6", value: 400 },
+    { month: "7", value: 400 },
+    { month: "8", value: 380 },
+    { month: "9", value: 370 },
+    { month: "10", value: 490 },
+    { month: "11", value: 350 },
+    { month: "12", value: 200 },
+  ];
+
+  const config = {
+    data: data,
+    xField: "month",
+    yField: "value",
+    height: 280,
+    smooth: true,
+    lineStyle: {
+      lineWidth: 2, // Độ dày đường
+      stroke: "#1890ff", // Màu xanh dương
+    },
+  };
 
   return (
     <Layout>
@@ -39,66 +120,79 @@ const Home: React.FC = () => {
             </h1>
             <div className="card-dashboard-container">
               <div className="card-dashboard" style={{ marginTop: "10px" }}>
-                <Card>
+                <Card style={{ height: "120px" }}>
                   <div>
-                    <Progress type="circle" size={60} percent={90} />
-                    <div className="card-info">
-                      <div>
-                        <p>200</p>
-                      </div>
-                      <div>
-                        <p>Số thứ tự đã cấp</p>
-                      </div>
-                    </div>
+                    <CalendarOutlined />
+                    <span style={{ marginLeft: "10px" }}>Số thứ tự đã cấp</span>
+                  </div>
+                  <div>
+                    <p>200</p>
                   </div>
                 </Card>
               </div>
               <div className="card-dashboard" style={{ marginTop: "10px" }}>
-                <Card>
+                <Card style={{ height: "120px" }}>
                   <div>
-                    <Progress type="circle" size={60} percent={90} />
-                    <div className="card-info">
-                      <div>
-                        <p>200</p>
-                      </div>
-                      <div>
-                        <p>Số thứ tự đã cấp</p>
-                      </div>
-                    </div>
+                    <CalendarOutlined />
+                    <span style={{ marginLeft: "10px" }}>Số thứ tự đã cấp</span>
+                  </div>
+                  <div>
+                    <p>200</p>
                   </div>
                 </Card>
               </div>
               <div className="card-dashboard" style={{ marginTop: "10px" }}>
-                <Card>
+                <Card style={{ height: "120px" }}>
                   <div>
-                    <Progress type="circle" size={60} percent={90} />
-                    <div className="card-info">
-                      <div>
-                        <p>200</p>
-                      </div>
-                      <div>
-                        <p>Số thứ tự đã cấp</p>
-                      </div>
-                    </div>
+                    <CalendarOutlined />
+                    <span style={{ marginLeft: "10px" }}>Số thứ tự đã cấp</span>
+                  </div>
+                  <div>
+                    <p>200</p>
                   </div>
                 </Card>
               </div>
               <div className="card-dashboard" style={{ marginTop: "10px" }}>
-                <Card>
+                <Card style={{ height: "120px" }}>
                   <div>
-                    <Progress type="circle" size={60} percent={90} />
-                    <div className="card-info">
-                      <div>
-                        <p>200</p>
-                      </div>
-                      <div>
-                        <p>Số thứ tự đã cấp</p>
-                      </div>
-                    </div>
+                    <CalendarOutlined />
+                    <span style={{ marginLeft: "10px" }}>Số thứ tự đã cấp</span>
+                  </div>
+                  <div>
+                    <p>200</p>
                   </div>
                 </Card>
               </div>
             </div>
+          </Content>
+          <Content
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "-40px",
+            }}
+          >
+            <Card style={{ width: "90%", height: "450px" }}>
+              <Row>
+                <Col style={{ marginTop: "-30px" }} span={20}>
+                  <h1>Bảng thống kê theo tháng</h1>
+                  <p>11/2023</p>
+                </Col>
+                <Col span={4}>
+                  <div className="">
+                    <span>Chọn theo</span>
+                    <Form.Item name="email">
+                      <Select style={{ width: "100px" }}>
+                        <Select.Option value="Ngày">Ngày</Select.Option>
+                        <Select.Option value="Tuần">Tuần</Select.Option>
+                        <Select.Option value=" Tháng">Tháng</Select.Option>
+                      </Select>
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+              <Line {...config} />
+            </Card>
           </Content>
         </Layout>
       </Layout>
@@ -109,21 +203,21 @@ const Home: React.FC = () => {
       >
         <Row style={{ marginTop: "20px", marginLeft: "-150px" }}>
           <Col span={10}>
-            <div className="">
+            <Dropdown overlay={menu} trigger={["click"]}>
               <BellOutlined
                 style={{
                   fontSize: "24px",
                   color: "red",
-                  marginLeft: "250px",
+                  marginLeft: "200px",
                 }}
               />
-            </div>
+            </Dropdown>
           </Col>
           <Col span={8}>
             <img
               style={{ marginTop: "-10px", marginLeft: "70px" }}
               className="imgaccount"
-              src="/asset/img/ao2.jpg"
+              src={userData?.avatar}
               alt=""
             />
           </Col>
@@ -134,69 +228,71 @@ const Home: React.FC = () => {
             </p>
           </Col>
         </Row>
-        <div
-          style={{
-            margin: "30px",
-            display: "flex",
-          }}
-          className="titletopbar"
-        >
-          Tổng quan
-        </div>
-        <div style={{ marginTop: "5px" }} className="card-dulieusider">
-          <Card className="card-sider">
-            <div style={{ marginTop: "-32px" }} className="card-content">
-              <Progress type="circle" size={60} percent={90} />
-              <div className="card-info">
-                <div>
-                  <p>4.100</p>
-                  <p>Thiết bị</p>
-                </div>
-                <div>
-                  <p>Đang hoạt động</p>
-                  <p>Ngưng hoạt động</p>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-        <div style={{ marginTop: "80px" }} className="card-dulieusider">
-          <Card className="card-sider">
-            <div style={{ marginTop: "-32px" }} className="card-content">
-              <Progress type="circle" size={60} percent={90} />
-              <div className="card-info">
-                <div>
-                  <p>4.100</p>
-                  <p>Thiết bị</p>
-                </div>
-                <div>
-                  <p>Đang hoạt động</p>
-                  <p>Ngưng hoạt động</p>
+        <Row>
+          <div
+            style={{
+              margin: "30px",
+              display: "flex",
+            }}
+            className="titletopbar"
+          >
+            Tổng quan
+          </div>
+          <div style={{ marginTop: "-30px" }} className="card-dulieusider">
+            <Card className="card-sider">
+              <div style={{ marginTop: "-32px" }} className="card-content">
+                <Progress type="circle" size={60} percent={90} />
+                <div className="card-info">
+                  <div>
+                    <p>4.100</p>
+                    <p>Thiết bị</p>
+                  </div>
+                  <div>
+                    <p>Đang hoạt động</p>
+                    <p>Ngưng hoạt động</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Card>
-        </div>
-        <div style={{ marginTop: "80px" }} className="card-dulieusider">
-          <Card className="card-sider">
-            <div style={{ marginTop: "-32px" }} className="card-content">
-              <Progress type="circle" size={60} percent={90} />
-              <div className="card-info">
-                <div>
-                  <p>4.100</p>
-                  <p>Thiết bị</p>
-                </div>
-                <div>
-                  <p>Đang hoạt động</p>
-                  <p>Ngưng hoạt động</p>
+            </Card>
+          </div>
+          <div style={{ marginTop: "60px" }} className="card-dulieusider">
+            <Card className="card-sider">
+              <div style={{ marginTop: "-32px" }} className="card-content">
+                <Progress type="circle" size={60} percent={90} />
+                <div className="card-info">
+                  <div>
+                    <p>4.100</p>
+                    <p>Thiết bị</p>
+                  </div>
+                  <div>
+                    <p>Đang hoạt động</p>
+                    <p>Ngưng hoạt động</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Card>
-        </div>
-        <div style={{ marginTop: "100px", marginLeft: "30px" }}>
-          <CalendarComponent />
-        </div>
+            </Card>
+          </div>
+          <div style={{ marginTop: "65px" }} className="card-dulieusider">
+            <Card className="card-sider">
+              <div style={{ marginTop: "-32px" }} className="card-content">
+                <Progress type="circle" size={60} percent={90} />
+                <div className="card-info">
+                  <div>
+                    <p>4.100</p>
+                    <p>Thiết bị</p>
+                  </div>
+                  <div>
+                    <p>Đang hoạt động</p>
+                    <p>Ngưng hoạt động</p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+          <div style={{ marginTop: "80px", marginLeft: "30px" }}>
+            <CalendarComponent />
+          </div>
+        </Row>
       </Sider>
     </Layout>
   );

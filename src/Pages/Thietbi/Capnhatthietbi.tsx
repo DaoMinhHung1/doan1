@@ -13,10 +13,11 @@ import {
   message,
 } from "antd";
 
-import { Content } from "antd/es/layout/layout";
+import { Content, Header } from "antd/es/layout/layout";
 import { useLocation } from "react-router-dom";
 import { Option } from "antd/es/mentions";
 import {
+  addDoc,
   collection,
   doc,
   getDocs,
@@ -26,6 +27,8 @@ import {
 } from "firebase/firestore";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
+import moment from "moment";
+import { serverTimestamp } from "firebase/database";
 
 interface DeviceData {
   matb: string;
@@ -57,6 +60,10 @@ const Capnhatthietbi: React.FC = () => {
   const location = useLocation();
   const device = location.state?.device;
   const [updatedDevice, setUpdatedDevice] = useState(device);
+  const storedUserData = localStorage.getItem("userData");
+  const [loginData, setLoginData] = useState<{
+    namedn: string;
+  } | null>(storedUserData ? JSON.parse(storedUserData) : null);
 
   const firestore = getFirestore();
 
@@ -114,13 +121,11 @@ const Capnhatthietbi: React.FC = () => {
       const deviceCollectionRef = collection(firestore, "devices");
       const querySnapshot = await getDocs(deviceCollectionRef);
 
-      // Tìm tài liệu trong collection "devices" có trường dữ liệu id trùng khớp với updatedDevice.id
       const matchingDocument = querySnapshot.docs.find(
         (doc) => doc.data().id === updatedDevice.id
       );
 
       if (matchingDocument) {
-        // Tạo một đối tượng chứa các trường dữ liệu cần cập nhật
         const updates = {
           matb: updatedDevice.matb,
           nametb: updatedDevice.nametb,
@@ -130,27 +135,42 @@ const Capnhatthietbi: React.FC = () => {
           hoatdongtb: updatedDevice.hoatdongtb,
         };
 
-        // Cập nhật dữ liệu của thiết bị trong Firestore
         await updateDoc(matchingDocument.ref, updates);
+
+        //Lưu nhật kí
+        const userLog = {
+          email: loginData?.namedn,
+          thoiGian: moment().format("DD-MM-YYYY HH:mm:ss"),
+          hanhDong: "Cập nhật thiết bị: " + updatedDevice.matb,
+          bang: "Thiet bi",
+        };
+
+        const diaryCollection = collection(firestore, "diary");
+        await addDoc(diaryCollection, {
+          ...userLog,
+          createdAt: serverTimestamp(),
+        });
         message.success("Cập nhật thiết bị thành công!");
       } else {
         message.error("Không tìm thấy thiết bị để cập nhật!");
       }
     } catch (error) {
-      message.error("Cập nhật dịch vụ thất bại!");
+      message.error("Cập nhật thiết bị thất bại!");
       console.log(error);
-      // Xử lý lỗi nếu cần thiết
     }
   };
-  console.log(device);
-  console.log(updatedDevice.id);
 
   return (
     <>
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Thiết bị</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Content style={{ marginLeft: "70px" }}>
             <Row>
               <Col span={24}>

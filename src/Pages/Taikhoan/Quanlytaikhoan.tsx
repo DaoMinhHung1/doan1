@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Input, Layout, Row, Table } from "antd";
 
 import { HomeOutlined } from "@ant-design/icons";
-import { Content } from "antd/es/layout/layout";
+import { Content, Header } from "antd/es/layout/layout";
 import { useHistory } from "react-router-dom";
 import { getDatabase, onValue, ref } from "firebase/database";
 import SiderComponent from "../../Component/SiderComponent";
@@ -115,7 +115,12 @@ const Quanlytaikhoan: React.FC = () => {
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Tài khoản</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Layout style={{ marginTop: "-5px" }} className="center-content">
             <Content>
               <Row>

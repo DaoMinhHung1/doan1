@@ -7,11 +7,12 @@ import {
   Input,
   Layout,
   Row,
+  Select,
   Table,
   Tooltip,
 } from "antd";
 import { HomeOutlined, CheckCircleOutlined } from "@ant-design/icons";
-import { Content } from "antd/es/layout/layout";
+import { Content, Header } from "antd/es/layout/layout";
 import { useHistory } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
@@ -169,7 +170,12 @@ const Quanlythietbi: React.FC = () => {
       <Layout>
         <SiderComponent />
         <Layout>
-          <HeaderComponent />
+          <Header className="account bgheader">
+            <Col span={15}>
+              <h1 className="titletopbar">Thiết bị</h1>
+            </Col>
+            <HeaderComponent />
+          </Header>
           <Layout style={{ marginTop: "-5px" }} className="center-content">
             <Content>
               <Row>
@@ -180,19 +186,31 @@ const Quanlythietbi: React.FC = () => {
               <Row>
                 <Col span={7} style={{ marginLeft: "-20px", flex: 1 }}>
                   <div className="form-item">
-                    <label>Tên đăng nhập</label>
+                    <label>Trạng thái hoạt động</label>
                     <Form.Item name="email">
-                      <Input className="form-input" />
+                      <Select style={{ width: "300px" }}>
+                        <Select.Option value="Tất cả">Tất cả</Select.Option>
+                        <Select.Option value="Hoạt động">
+                          Hoạt động
+                        </Select.Option>
+                        <Select.Option value=" Không hoạt động">
+                          Không hoạt động
+                        </Select.Option>
+                      </Select>
                     </Form.Item>
                   </div>
                 </Col>
                 <Col span={10} style={{ marginLeft: "-20px", flex: 1 }}>
-                  <div className="form-thietbi form-item">
-                    <label>Tên đăng nhập</label>
+                  <div className="form-item">
+                    <label>Trạng thái hoạt động</label>
                     <Form.Item name="email">
-                      <div className="">
-                        <Input className="form-input" />
-                      </div>
+                      <Select style={{ width: "300px" }}>
+                        <Select.Option value="Tất cả">Tất cả</Select.Option>
+                        <Select.Option value="Kết nối">Kết nối</Select.Option>
+                        <Select.Option value="Ngưng kết nối">
+                          Ngưng kết nối
+                        </Select.Option>
+                      </Select>
                     </Form.Item>
                   </div>
                 </Col>
@@ -200,7 +218,10 @@ const Quanlythietbi: React.FC = () => {
                   <div className="form-thietbi form-item">
                     <label>Tên đăng nhập</label>
                     <Form.Item name="email">
-                      <Input className="form-input" />
+                      <Input
+                        className="form-input"
+                        placeholder="Nhập từ khóa"
+                      />
                     </Form.Item>
                   </div>
                 </Col>
