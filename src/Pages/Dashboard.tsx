@@ -22,12 +22,15 @@ import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import { useDispatch } from "react-redux";
 import { fetchOrderNumbers } from "../redux/ordernumbersSlice";
+
 const { Sider } = Layout;
+const { Option } = Select;
 
 const Home: React.FC = () => {
   const ordernumbers = useSelector(
     (state: RootState) => state.ordernumbers.orderNumbers
   );
+
   const dispatch: ThunkDispatch<RootState, unknown, AnyAction> = useDispatch();
   useEffect(() => {
     const fetchData = async () => {
@@ -63,7 +66,7 @@ const Home: React.FC = () => {
     </Menu>
   );
 
-  //Tên đăng nhập
+  // Tên đăng nhập
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
@@ -74,32 +77,104 @@ const Home: React.FC = () => {
     }
   }, []);
 
-  const data = [
-    { month: "1", value: 100 },
-    { month: "2", value: 200 },
-    { month: "3", value: 150 },
-    { month: "4", value: 350 },
-    { month: "5", value: 250 },
-    { month: "6", value: 400 },
-    { month: "7", value: 400 },
-    { month: "8", value: 380 },
-    { month: "9", value: 370 },
-    { month: "10", value: 490 },
-    { month: "11", value: 350 },
-    { month: "12", value: 200 },
-  ];
+  const ordernumbersData = useSelector(
+    (state: RootState) => state.ordernumbers.orderNumbers
+  );
+
+  const [chartType, setChartType] = useState<string>("Ngày");
+
+  const handleChartTypeChange = (value: string) => {
+    setChartType(value);
+  };
+
+  const dailyData: Array<{ day: string; value: string }> = [];
+
+  ordernumbersData.forEach((order) => {
+    const orderDate = new Date(order.startdate);
+    const day = orderDate.getDate().toString();
+
+    let dayData = dailyData.find((data) => data.day === day);
+    if (!dayData) {
+      dayData = { day, value: "" };
+      dailyData.push(dayData);
+    }
+
+    dayData.value += order.STT;
+  });
+
+  const weeklyData: { week: string; value: string }[] = [];
+  const monthlyData: { month: string; value: string }[] = [];
+
+  ordernumbersData.forEach((order, index) => {
+    const currentDate = new Date(order.enddate);
+
+    // Tính toán dữ liệu theo tuần
+    const currentWeekNumber = Math.ceil((index + 1) / 7);
+    if (!weeklyData[currentWeekNumber - 1]) {
+      weeklyData[currentWeekNumber - 1] = {
+        week: `Week ${currentWeekNumber}`,
+        value: "",
+      };
+    }
+    weeklyData[currentWeekNumber - 1].value += order.STT;
+
+    // Tính toán dữ liệu theo tháng
+    const currentMonthNumber = currentDate.getMonth();
+    if (!monthlyData[currentMonthNumber]) {
+      monthlyData[currentMonthNumber] = {
+        month: `Month ${currentMonthNumber + 1}`,
+        value: "",
+      };
+    }
+    monthlyData[currentMonthNumber].value += order.STT;
+  });
+
+  const getDataByChartType = () => {
+    const data = [];
+
+    switch (chartType) {
+      case "Ngày":
+        data.push({ day: "Ngày", value: ordernumbersData.length });
+        break;
+      case "Tuần":
+        data.push({ week: "Tuần", value: ordernumbersData.length });
+        break;
+      case "Tháng":
+        data.push({ month: "Tháng", value: ordernumbersData.length });
+        break;
+      default:
+        break;
+    }
+
+    return data;
+  };
 
   const config = {
-    data: data,
-    xField: "month",
+    data: getDataByChartType(),
+    xField:
+      chartType === "Tháng" ? "month" : chartType === "Tuần" ? "week" : "day",
     yField: "value",
     height: 280,
     smooth: true,
     lineStyle: {
-      lineWidth: 2, // Độ dày đường
-      stroke: "#1890ff", // Màu xanh dương
+      lineWidth: 2,
+      stroke: "#1890ff",
+      point: {
+        size: 3,
+        shape: "circle",
+        style: {
+          fill: "#1890ff",
+          stroke: "#1890ff",
+        },
+      },
+    },
+    yAxis: {
+      tickCount: 5,
+      yField: "value",
     },
   };
+
+  console.log(ordernumbersData.length);
 
   return (
     <Layout>
@@ -126,7 +201,7 @@ const Home: React.FC = () => {
                     <span style={{ marginLeft: "10px" }}>Số thứ tự đã cấp</span>
                   </div>
                   <div>
-                    <p>200</p>
+                    <p>{ordernumbersData.length}</p>
                   </div>
                 </Card>
               </div>
@@ -181,17 +256,21 @@ const Home: React.FC = () => {
                 <Col span={4}>
                   <div className="">
                     <span>Chọn theo</span>
-                    <Form.Item name="email">
-                      <Select style={{ width: "100px" }}>
-                        <Select.Option value="Ngày">Ngày</Select.Option>
-                        <Select.Option value="Tuần">Tuần</Select.Option>
-                        <Select.Option value=" Tháng">Tháng</Select.Option>
+                    <Form.Item name="chartType">
+                      <Select
+                        style={{ width: "100px" }}
+                        defaultValue="Ngày"
+                        onChange={handleChartTypeChange}
+                      >
+                        <Option value="Ngày">Ngày</Option>
+                        <Option value="Tuần">Tuần</Option>
+                        <Option value="Tháng">Tháng</Option>
                       </Select>
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
-              <Line {...config} />
+              <Line {...config} /> {/* Sử dụng component Line với config */}
             </Card>
           </Content>
         </Layout>

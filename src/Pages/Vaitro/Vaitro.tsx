@@ -20,8 +20,7 @@ const Vaitro: React.FC = () => {
     const positionsCollection = collection(db, "position");
 
     const unsubscribe = onSnapshot(positionsCollection, (snapshot) => {
-      const positions: PositionData[] = [];
-      const positionsMap: { [namePos: string]: number } = {};
+      const positionsMap: { [namePos: string]: PositionData } = {};
 
       snapshot.forEach((doc) => {
         const data = doc.data() as PositionData;
@@ -29,20 +28,16 @@ const Vaitro: React.FC = () => {
 
         // Tăng số lượng khi dữ liệu mới trùng namePos
         if (positionsMap[namePos]) {
-          positionsMap[namePos]++;
+          positionsMap[namePos].number++;
         } else {
-          positionsMap[namePos] = 1;
-          positions.push(data);
+          positionsMap[namePos] = { ...data, number: 1 };
         }
       });
 
-      // Cập nhật danh sách và số lượng vào state
-      const updatedPositions = positions.map((position) => ({
-        ...position,
-        number: positionsMap[position.namePos],
-      }));
+      // Chuyển đổi positionsMap thành mảng positions
+      const positions = Object.values(positionsMap);
 
-      setPositionList(updatedPositions);
+      setPositionList(positions);
     });
 
     return () => unsubscribe();
@@ -74,7 +69,7 @@ const Vaitro: React.FC = () => {
       width: 300,
     },
     {
-      title: "",
+      title: " ",
       dataIndex: "updateAction",
       key: "updateAction",
       width: 150,
@@ -128,6 +123,7 @@ const Vaitro: React.FC = () => {
                     <div style={{ marginBottom: 16 }}></div>
                     <Table<PositionData>
                       columns={columns}
+                      className="custom-table"
                       dataSource={positionList}
                       pagination={{
                         pageSize: 6,

@@ -106,6 +106,9 @@ const Capnhattaikhoan: React.FC = () => {
 
       await update(userRef, updates);
       message.success("Cập nhật tài khoản thành công!");
+
+      // Cập nhật dữ liệu trong localStorage
+      localStorage.setItem("userData", JSON.stringify(updatedUser));
     } catch (error) {
       console.error("Lỗi cập nhật tài khoản:", error);
       message.error("Có lỗi xảy ra khi cập nhật tài khoản!");

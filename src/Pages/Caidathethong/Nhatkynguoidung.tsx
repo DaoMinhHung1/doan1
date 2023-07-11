@@ -1,23 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Form, Input, Layout, Row, Table } from "antd";
+import { Col, Layout, Row, Table } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
 import { Content, Header } from "antd/es/layout/layout";
-import { useHistory } from "react-router-dom";
-import { RootState } from "../../redux/rootReducer";
-import { useSelector } from "react-redux";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  onSnapshot,
-} from "firebase/firestore";
+import { getFirestore, collection, onSnapshot } from "firebase/firestore";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
 
 interface DiaryData {
   email: string;
   hanhDong: string;
-  thoiGian: number;
+  thoiGian: string;
   bang: string;
 }
 
@@ -31,9 +23,17 @@ const Quanlynguoidung: React.FC = () => {
     const unsubscribe = onSnapshot(diaryCollection, (snapshot) => {
       const data: DiaryData[] = [];
       snapshot.forEach((doc) => {
-        data.push(doc.data() as DiaryData);
+        const diaryEntry = doc.data() as DiaryData;
+        const date = new Date(diaryEntry.thoiGian);
+        diaryEntry.thoiGian = date.toLocaleString(); // Chuyển đổi thành chuỗi ngày và giờ
+        data.push(diaryEntry);
       });
-      setDiaryData(data);
+      setDiaryData(
+        data.sort(
+          (a, b) =>
+            new Date(b.thoiGian).getTime() - new Date(a.thoiGian).getTime()
+        )
+      ); // Sắp xếp mảng dựa trên trường thoiGian (mới nhất đến cũ nhất)
     });
 
     return () => unsubscribe(); // Unsubscribe when the component unmounts
@@ -92,6 +92,7 @@ const Quanlynguoidung: React.FC = () => {
                     <div style={{ marginBottom: 16 }}></div>
                     <Table<DiaryData>
                       columns={columns}
+                      className="custom-table"
                       dataSource={diaryData}
                       pagination={{
                         pageSize: 5,

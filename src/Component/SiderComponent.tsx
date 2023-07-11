@@ -105,8 +105,6 @@ const SiderComponent: React.FC = () => {
           <Dropdown overlay={menu}>
             <Menu.Item
               className="menu-item"
-
-              // onClick={(e) => e.preventDefault()}
             >
               <SettingOutlined className="icon-sider" />
               Cài đặt hệ thống

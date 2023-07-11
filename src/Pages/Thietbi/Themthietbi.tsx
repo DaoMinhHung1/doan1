@@ -85,6 +85,7 @@ const Themthietbi: React.FC = () => {
             ...deviceData,
             id: newID,
             hoatdongtb: "Hoạt động",
+            ketnoitb: "Kết nối",
           }; // Set hoatdongtb to "Hoạt động"
           await addDoc(devicesCollection, deviceWithID);
 
@@ -118,13 +119,21 @@ const Themthietbi: React.FC = () => {
             id: "",
           });
 
-          // Set hoatdongtb to "ngừng hoạt động" after 5 minutes
+          // Set hoatdongtb to "Ngừng hoạt động" after 24 hours
           setTimeout(() => {
             setDeviceData((prevState) => ({
               ...prevState,
-              hoatdongtb: "ngừng hoạt động",
+              hoatdongtb: "Ngừng hoạt động",
             }));
-          }, 5 * 60 * 1000); // 5 minutes in milliseconds
+          }, 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+
+          // Set ketnoitb to "Ngừng kết nối" after 24 hours
+          setTimeout(() => {
+            setDeviceData((prevState) => ({
+              ...prevState,
+              ketnoitb: "Ngừng kết nối",
+            }));
+          }, 24 * 60 * 60 * 1000); // 24 hours in milliseconds
         } catch (error) {
           console.error("Lỗi khi thêm thiết bị:", error);
           message.error("Lỗi khi thêm thiết bị");

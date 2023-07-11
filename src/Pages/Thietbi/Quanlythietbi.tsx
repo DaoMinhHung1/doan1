@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Badge,
   Button,
@@ -24,6 +24,8 @@ import { AnyAction } from "redux";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
 
+import "../../StylePages/Home.css";
+
 interface DeviceData {
   matb: string;
   nametb: string;
@@ -37,6 +39,10 @@ interface DeviceData {
 const Quanlythietbi: React.FC = () => {
   const history = useHistory();
   const devicesData = useSelector((state: RootState) => state.devices.devices);
+  const [selectedStatus, setSelectedStatus] = useState<string>("Tất cả");
+  const [selectedConnection, setSelectedConnection] =
+    useState<string>("Tất cả");
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
 
   const dispatch: ThunkDispatch<RootState, unknown, AnyAction> = useDispatch();
 
@@ -72,7 +78,38 @@ const Quanlythietbi: React.FC = () => {
     }
   };
 
+  // lọc từ khóa
+  const handleStatusChange = (value: string) => {
+    setSelectedStatus(value);
+  };
+
+  const handleConnectionChange = (value: string) => {
+    setSelectedConnection(value);
+  };
+
+  const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchKeyword(e.target.value);
+  };
+
   const MAX_DISPLAY_ITEMS = 1;
+  const filteredDevices = devicesData.filter((device) => {
+    if (selectedStatus !== "Tất cả" && device.hoatdongtb !== selectedStatus) {
+      return false;
+    }
+    if (
+      selectedConnection !== "Tất cả" &&
+      device.ketnoitb !== selectedConnection
+    ) {
+      return false;
+    }
+    if (
+      searchKeyword.trim() !== "" &&
+      !device.nametb.toLowerCase().includes(searchKeyword.toLowerCase())
+    ) {
+      return false;
+    }
+    return true;
+  });
 
   const columns = [
     {
@@ -110,10 +147,11 @@ const Quanlythietbi: React.FC = () => {
       dataIndex: "ketnoitb",
       key: "ketnoitb",
       width: 200,
-      render: (text: any, record: DeviceData) => (
-        <>
-          <CheckCircleOutlined /> Kết nối
-        </>
+      render: (ketnoitb: string) => (
+        <Badge
+          status={ketnoitb === "Kết nối" ? "success" : "default"}
+          text={ketnoitb}
+        />
       ),
     },
     {
@@ -140,7 +178,7 @@ const Quanlythietbi: React.FC = () => {
       ),
     },
     {
-      title: "",
+      title: " ",
       dataIndex: "viewAction",
       key: "viewAction",
       width: 150,
@@ -153,7 +191,7 @@ const Quanlythietbi: React.FC = () => {
       ),
     },
     {
-      title: "",
+      title: " ",
       dataIndex: "updateAction",
       key: "updateAction",
       width: 150,
@@ -188,7 +226,10 @@ const Quanlythietbi: React.FC = () => {
                   <div className="form-item">
                     <label>Trạng thái hoạt động</label>
                     <Form.Item name="email">
-                      <Select style={{ width: "300px" }}>
+                      <Select
+                        style={{ width: "300px" }}
+                        onChange={handleStatusChange}
+                      >
                         <Select.Option value="Tất cả">Tất cả</Select.Option>
                         <Select.Option value="Hoạt động">
                           Hoạt động
@@ -202,9 +243,12 @@ const Quanlythietbi: React.FC = () => {
                 </Col>
                 <Col span={10} style={{ marginLeft: "-20px", flex: 1 }}>
                   <div className="form-item">
-                    <label>Trạng thái hoạt động</label>
+                    <label>Trạng thái kết nối</label>
                     <Form.Item name="email">
-                      <Select style={{ width: "300px" }}>
+                      <Select
+                        style={{ width: "300px" }}
+                        onChange={handleConnectionChange}
+                      >
                         <Select.Option value="Tất cả">Tất cả</Select.Option>
                         <Select.Option value="Kết nối">Kết nối</Select.Option>
                         <Select.Option value="Ngưng kết nối">
@@ -216,11 +260,12 @@ const Quanlythietbi: React.FC = () => {
                 </Col>
                 <Col span={7} style={{ marginLeft: "-20px", flex: 1 }}>
                   <div className="form-thietbi form-item">
-                    <label>Tên đăng nhập</label>
-                    <Form.Item name="email">
+                    <label>Từ khóa</label>
+                    <Form.Item name="">
                       <Input
                         className="form-input"
                         placeholder="Nhập từ khóa"
+                        onChange={handleKeywordChange}
                       />
                     </Form.Item>
                   </div>
@@ -232,7 +277,8 @@ const Quanlythietbi: React.FC = () => {
                     <div style={{ marginBottom: 16 }}></div>
                     <Table<DeviceData>
                       columns={columns}
-                      dataSource={devicesData}
+                      className="custom-table"
+                      dataSource={filteredDevices}
                       pagination={{
                         pageSize: 5,
                         pageSizeOptions: ["5", "10", "15"],

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import { Button, Col, Form, Input, Layout, Row, Table } from "antd";
+import { Button, Col, Form, Input, Layout, Row, Select, Table } from "antd";
 
-import { FileAddOutlined, HomeOutlined } from "@ant-design/icons";
+import { FileAddOutlined } from "@ant-design/icons";
 import { Content, Header } from "antd/es/layout/layout";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -13,6 +13,9 @@ import { useDispatch } from "react-redux";
 import { fetchOrderNumbers } from "../../redux/ordernumbersSlice";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
+import { DatePicker } from "antd";
+import dayjs, { Dayjs } from "dayjs";
+import { RangeValue } from "rc-picker/lib/interface";
 
 interface OrderNumbers {
   STT: string;
@@ -39,8 +42,15 @@ const Quanlycapso: React.FC = () => {
     console.log(storedUserData);
   }, []);
 
+  const { RangePicker } = DatePicker;
+
+  const [selectedStatus, setSelectedStatus] = useState<string>("Tất cả");
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+
   const history = useHistory();
-  const ordernumbers = useSelector(
+  const orderNumbers = useSelector(
     (state: RootState) => state.ordernumbers.orderNumbers
   );
 
@@ -50,21 +60,64 @@ const Quanlycapso: React.FC = () => {
       try {
         await dispatch(fetchOrderNumbers());
       } catch (error) {
-        console.error("Error fetching device data:", error);
+        console.error("Error fetching order numbers:", error);
       }
     };
     fetchData();
   }, [dispatch]);
-  //Xem chi tiết
+
   const handleViewDetails = (orderID: string) => {
-    const selectedOrder = ordernumbers.find((orders) => orders.id === orderID);
+    const selectedOrder = orderNumbers.find((order) => order.id === orderID);
     if (selectedOrder) {
       console.log("Selected order:", selectedOrder);
-      history.push(`/chitietcs/${orderID}`, { orders: selectedOrder });
+      history.push(`/chitietcs/${orderID}`, { order: selectedOrder });
     } else {
-      console.log("Không có dữ liệu dịch vụ");
+      console.log("Không có dữ liệu đơn hàng");
     }
   };
+
+  const handleStatusChange = (value: string) => {
+    setSelectedStatus(value);
+  };
+
+  const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchKeyword(e.target.value);
+  };
+
+  const filteredOrderNumbers = orderNumbers.filter((order) => {
+    if (
+      selectedStatus !== "Tất cả" &&
+      order.isActive.toString() !== selectedStatus
+    ) {
+      return false;
+    }
+    if (
+      searchKeyword.trim() !== "" &&
+      !order.namedv.toLowerCase().includes(searchKeyword.toLowerCase())
+    ) {
+      return false;
+    }
+    if (startDate && endDate) {
+      const orderStartDate = dayjs(order.startdate, "DD-MM-YYYY");
+      const orderEndDate = dayjs(order.enddate, "DD-MM-YYYY");
+      const rangeStartDate = startDate.startOf("day");
+      const rangeEndDate = endDate.endOf("day");
+      if (
+        !(
+          orderStartDate.isSame(rangeStartDate, "day") ||
+          orderStartDate.isAfter(rangeStartDate, "day")
+        ) ||
+        !(
+          orderEndDate.isSame(rangeEndDate, "day") ||
+          orderEndDate.isBefore(rangeEndDate, "day")
+        )
+      ) {
+        return false;
+      }
+    }
+    return true;
+  });
+
   // Table
   const columns = [
     {
@@ -108,16 +161,17 @@ const Quanlycapso: React.FC = () => {
           {isActive ? "Hoạt động" : "Bỏ qua"}
         </span>
       ),
+      width: 150,
     },
     {
       title: "Nguồn cấp",
       dataIndex: "provide",
       key: "provide",
       render: (_text: any, record: OrderNumbers) => <span>Hệ thống</span>,
-      width: 200,
+      width: 150,
     },
     {
-      title: "",
+      title: " ",
       dataIndex: "chitietAction",
       key: "chitietAction",
       render: (_text: any, record: OrderNumbers) => (
@@ -147,29 +201,52 @@ const Quanlycapso: React.FC = () => {
                 </Col>
               </Row>
               <Row>
-                <Col span={7} style={{ marginLeft: "-20px", flex: 1 }}>
+                <Col
+                  span={7}
+                  style={{ marginLeft: "-20px", flex: 1, marginTop: "8px" }}
+                >
                   <div className="form-item">
                     <label>Trạng thái hoạt động</label>
                     <Form.Item name="email">
-                      <Input className="form-input" />
+                      <Select
+                        style={{ width: "300px" }}
+                        onChange={handleStatusChange}
+                      >
+                        <Select.Option value="Tất cả">Tất cả</Select.Option>
+                        <Select.Option value=" Hoạt động">
+                          Hoạt động
+                        </Select.Option>
+                        <Select.Option value="Ngưng hoạt động">
+                          Ngưng hoạt động
+                        </Select.Option>
+                      </Select>
                     </Form.Item>
                   </div>
                 </Col>
-                <Col span={10} style={{ marginLeft: "-20px", flex: 1 }}>
-                  <div className="form-thietbi form-item">
-                    <label>Chọn thời gian</label>
-                    <Form.Item name="email">
-                      <div className="">
-                        <Input className="form-input" />
-                      </div>
-                    </Form.Item>
-                  </div>
+                <Col span={5} style={{ marginLeft: "-20px", flex: 1 }}>
+                  <Form.Item name="range-picker" label="Chọn thời gian">
+                    <RangePicker
+                      format="DD-MM-YYYY"
+                      onChange={(dates) => {
+                        if (dates && dates.length === 2) {
+                          setStartDate(dates[0]);
+                          setEndDate(dates[1]);
+                        } else {
+                          setStartDate(null);
+                          setEndDate(null);
+                        }
+                      }}
+                    />
+                  </Form.Item>
                 </Col>
-                <Col span={7} style={{ marginLeft: "-20px", flex: 1 }}>
+                <Col span={10} style={{ marginLeft: "130px", flex: 1 }}>
                   <div className="form-thietbi form-item">
                     <label>Từ khóa</label>
                     <Form.Item name="email">
-                      <Input className="form-input" />
+                      <Input
+                        className="form-input"
+                        onChange={handleKeywordChange}
+                      />
                     </Form.Item>
                   </div>
                 </Col>
@@ -180,7 +257,8 @@ const Quanlycapso: React.FC = () => {
                     <div style={{ marginBottom: 16 }}></div>
                     <Table<OrderNumbers>
                       columns={columns}
-                      dataSource={ordernumbers}
+                      className="custom-table"
+                      dataSource={filteredOrderNumbers}
                       pagination={{
                         pageSize: 5,
                         pageSizeOptions: ["5", "10", "15"],

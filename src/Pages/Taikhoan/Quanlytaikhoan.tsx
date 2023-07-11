@@ -74,7 +74,7 @@ const Quanlytaikhoan: React.FC = () => {
       width: 200,
     },
     {
-      title: "",
+      title: " ",
       dataIndex: "updateAction",
       key: "updateAction",
       width: 100,
@@ -152,6 +152,7 @@ const Quanlytaikhoan: React.FC = () => {
                     <div style={{ marginBottom: 16 }}></div>
                     <Table
                       columns={columns}
+                      className="custom-table"
                       dataSource={usersData}
                       pagination={{
                         pageSize: 5,

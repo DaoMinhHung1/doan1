@@ -364,6 +364,10 @@
     height: 100vh;
 }
 
+.custom-table .ant-table-thead>tr>th {
+    background-color: #ff7506;
+    color: white;
+}
 
 
 *h6 {

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Button, Col, Form, Input, Layout, Row, Select, Table } from "antd";
 
@@ -30,6 +30,11 @@ const Quanlydichvu: React.FC = () => {
   const servicesData = useSelector(
     (state: RootState) => state.servies.services
   );
+
+  const [selectedStatus, setSelectedStatus] = useState<string>("Tất cả");
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const dispatch: ThunkDispatch<RootState, unknown, AnyAction> = useDispatch();
   useEffect(() => {
@@ -75,6 +80,27 @@ const Quanlydichvu: React.FC = () => {
     }
   };
 
+  const handleStatusChange = (value: string) => {
+    setSelectedStatus(value);
+  };
+
+  const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchKeyword(e.target.value);
+  };
+
+  const filteredServices = servicesData.filter((service) => {
+    if (selectedStatus !== "Tất cả" && service.hoatdongdv !== selectedStatus) {
+      return false;
+    }
+    if (
+      searchKeyword.trim() !== "" &&
+      !service.namedv.toLowerCase().includes(searchKeyword.toLowerCase())
+    ) {
+      return false;
+    }
+    return true;
+  });
+
   const { RangePicker } = DatePicker;
   // Table
   const columns = [
@@ -104,7 +130,7 @@ const Quanlydichvu: React.FC = () => {
     },
 
     {
-      title: "",
+      title: " ",
       dataIndex: "viewAction",
       key: "viewAction",
       width: 150,
@@ -117,7 +143,7 @@ const Quanlydichvu: React.FC = () => {
       ),
     },
     {
-      title: "",
+      title: " ",
       dataIndex: "updateAction",
       key: "updateAction",
       width: 150,
@@ -155,13 +181,16 @@ const Quanlydichvu: React.FC = () => {
                   <div className="form-item">
                     <label>Trạng thái hoạt động</label>
                     <Form.Item name="email">
-                      <Select style={{ width: "300px" }}>
+                      <Select
+                        style={{ width: "300px" }}
+                        onChange={handleStatusChange}
+                      >
                         <Select.Option value="Tất cả">Tất cả</Select.Option>
-                        <Select.Option value="Hoạt động">
-                          Hoạt động
+                        <Select.Option value="Đang thực hiện">
+                          Đang thực hiện
                         </Select.Option>
-                        <Select.Option value=" Không hoạt động">
-                          Không hoạt động
+                        <Select.Option value=" Đã hoàn thành">
+                          Đã hoàn thành
                         </Select.Option>
                       </Select>
                     </Form.Item>
@@ -176,7 +205,10 @@ const Quanlydichvu: React.FC = () => {
                   <div className="form-thietbi form-item">
                     <label>Từ khóa</label>
                     <Form.Item name="email">
-                      <Input className="form-input" />
+                      <Input
+                        className="form-input"
+                        onChange={handleKeywordChange}
+                      />
                     </Form.Item>
                   </div>
                 </Col>
@@ -187,7 +219,8 @@ const Quanlydichvu: React.FC = () => {
                     <div style={{ marginBottom: 16 }}></div>
                     <Table<ServiceData>
                       columns={columns}
-                      dataSource={sortedServices}
+                      className="custom-table"
+                      dataSource={filteredServices}
                       pagination={{
                         pageSize: 5,
                         pageSizeOptions: ["5", "10", "15"],
