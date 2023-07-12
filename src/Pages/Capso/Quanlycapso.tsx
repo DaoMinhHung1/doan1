@@ -15,7 +15,6 @@ import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
 import { DatePicker } from "antd";
 import dayjs, { Dayjs } from "dayjs";
-import { RangeValue } from "rc-picker/lib/interface";
 
 interface OrderNumbers {
   STT: string;
@@ -239,7 +238,7 @@ const Quanlycapso: React.FC = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col span={10} style={{ marginLeft: "130px", flex: 1 }}>
+                <Col span={10} style={{ marginLeft: "230px", flex: 1 }}>
                   <div className="form-thietbi form-item">
                     <label>Từ khóa</label>
                     <Form.Item name="email">
@@ -256,6 +255,9 @@ const Quanlycapso: React.FC = () => {
                   <div>
                     <div style={{ marginBottom: 16 }}></div>
                     <Table<OrderNumbers>
+                      rowClassName={(record, index) =>
+                        index % 2 === 0 ? "table-row-even" : "table-row-odd"
+                      }
                       columns={columns}
                       className="custom-table"
                       dataSource={filteredOrderNumbers}

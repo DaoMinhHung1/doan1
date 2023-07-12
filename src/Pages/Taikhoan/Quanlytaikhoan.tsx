@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Button, Col, Form, Input, Layout, Row, Table } from "antd";
+import { Button, Col, Form, Input, Layout, Row, Select, Table } from "antd";
 
 import { HomeOutlined } from "@ant-design/icons";
 import { Content, Header } from "antd/es/layout/layout";
@@ -15,7 +15,7 @@ interface UserData {
   email: string;
   password: string;
   passwoordagain: string;
-  sdt: string;
+  phone: string;
   role: string;
   condition: string;
   id: string;
@@ -51,8 +51,8 @@ const Quanlytaikhoan: React.FC = () => {
     },
     {
       title: "Số điện thoại ",
-      dataIndex: "sdt",
-      key: "sdt",
+      dataIndex: "phone",
+      key: "phone",
       width: 150,
     },
     {
@@ -110,6 +110,30 @@ const Quanlytaikhoan: React.FC = () => {
     fetchData();
   }, []);
 
+  const [selectedStatus, setSelectedStatus] = useState<string>("Tất cả");
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
+
+  const handleStatusChange = (value: string) => {
+    setSelectedStatus(value);
+  };
+
+  const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchKeyword(e.target.value);
+  };
+
+  const filteredUsers = usersData.filter((user) => {
+    if (selectedStatus !== "Tất cả" && user.role !== selectedStatus) {
+      return false;
+    }
+    if (
+      searchKeyword.trim() !== "" &&
+      !user.namedn.toLowerCase().includes(searchKeyword.toLowerCase())
+    ) {
+      return false;
+    }
+    return true;
+  });
+
   return (
     <>
       <Layout>
@@ -129,11 +153,22 @@ const Quanlytaikhoan: React.FC = () => {
                 </Col>
               </Row>
               <Row>
-                <Col span={16} style={{ marginLeft: "-20px", flex: 1 }}>
+                <Col
+                  span={16}
+                  style={{ marginLeft: "-20px", flex: 1, marginTop: "8px" }}
+                >
                   <div className="form-item">
                     <label>Trạng thái hoạt động</label>
                     <Form.Item name="email">
-                      <Input className="form-input" />
+                      <Select
+                        style={{ width: "300px" }}
+                        onChange={handleStatusChange}
+                      >
+                        <Select.Option value="Tất cả">Tất cả</Select.Option>
+                        <Select.Option value="Kế toán">Kế toán</Select.Option>
+                        <Select.Option value="Quản lý">Quản lý</Select.Option>
+                        <Select.Option value="Admin">Admin</Select.Option>
+                      </Select>
                     </Form.Item>
                   </div>
                 </Col>
@@ -141,7 +176,10 @@ const Quanlytaikhoan: React.FC = () => {
                   <div className="form-thietbi form-item">
                     <label>Từ khóa</label>
                     <Form.Item name="email">
-                      <Input className="form-input" />
+                      <Input
+                        className="form-input"
+                        onChange={handleKeywordChange}
+                      />
                     </Form.Item>
                   </div>
                 </Col>
@@ -151,9 +189,12 @@ const Quanlytaikhoan: React.FC = () => {
                   <div>
                     <div style={{ marginBottom: 16 }}></div>
                     <Table
+                      rowClassName={(record, index) =>
+                        index % 2 === 0 ? "table-row-even" : "table-row-odd"
+                      }
                       columns={columns}
                       className="custom-table"
-                      dataSource={usersData}
+                      dataSource={filteredUsers}
                       pagination={{
                         pageSize: 5,
                         pageSizeOptions: ["5", "10", "15"],

@@ -218,6 +218,9 @@ const Quanlydichvu: React.FC = () => {
                   <div>
                     <div style={{ marginBottom: 16 }}></div>
                     <Table<ServiceData>
+                      rowClassName={(record, index) =>
+                        index % 2 === 0 ? "table-row-even" : "table-row-odd"
+                      }
                       columns={columns}
                       className="custom-table"
                       dataSource={filteredServices}

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Col, Layout, Row, Table } from "antd";
+import { Col, Form, Input, Layout, Row, Table, DatePicker } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
 import { Content, Header } from "antd/es/layout/layout";
 import { getFirestore, collection, onSnapshot } from "firebase/firestore";
 import SiderComponent from "../../Component/SiderComponent";
 import HeaderComponent from "../../Component/Header";
+import dayjs from "dayjs";
+
+const { RangePicker } = DatePicker;
 
 interface DiaryData {
   email: string;
@@ -15,6 +18,11 @@ interface DiaryData {
 
 const Quanlynguoidung: React.FC = () => {
   const [diaryData, setDiaryData] = useState<DiaryData[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [selectedRange, setSelectedRange] = useState<[string, string] | null>(
+    null
+  );
+  const [originalData, setOriginalData] = useState<DiaryData[]>([]);
 
   useEffect(() => {
     const db = getFirestore();
@@ -38,6 +46,54 @@ const Quanlynguoidung: React.FC = () => {
 
     return () => unsubscribe(); // Unsubscribe when the component unmounts
   }, []);
+
+  useEffect(() => {
+    if (diaryData.length > 0) {
+      setOriginalData(diaryData);
+    }
+  }, [diaryData]);
+
+  const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchKeyword(e.target.value);
+  };
+
+  const handleRangePickerChange = (
+    dates: any,
+    dateStrings: [string, string]
+  ) => {
+    setSelectedRange(dates);
+  };
+
+  const filterData = (data: DiaryData[]) => {
+    return data.filter((item) => {
+      // Lọc theo từ khóa
+      if (
+        searchKeyword.trim() !== "" &&
+        !item.email.toLowerCase().includes(searchKeyword.toLowerCase())
+      ) {
+        return false;
+      }
+
+      // Lọc theo RangePicker
+      if (selectedRange !== null) {
+        const [start, end] = selectedRange;
+        const dataDate = dayjs(item.thoiGian);
+        const rangeStartDate = dayjs(start, "DD-MM-YYYY");
+        const rangeEndDate = dayjs(end, "DD-MM-YYYY");
+
+        if (
+          !(
+            dataDate.isSame(rangeStartDate, "day") ||
+            (dataDate.isAfter(rangeStartDate, "day") &&
+              dataDate.isBefore(rangeEndDate, "day"))
+          )
+        ) {
+          return false;
+        }
+      }
+      return true;
+    });
+  };
   // Table columns
   const columns = [
     {
@@ -67,6 +123,8 @@ const Quanlynguoidung: React.FC = () => {
     },
   ];
 
+  const filteredData = filterData(originalData);
+
   return (
     <>
       <Layout>
@@ -85,15 +143,41 @@ const Quanlynguoidung: React.FC = () => {
                   <h1 className="titletopbar">Danh sách dịch vụ</h1>
                 </Col>
               </Row>
-              <Row>{/* Form components */}</Row>
+              <Row>
+                <Col span={5} style={{ marginLeft: "-20px", flex: 1 }}>
+                  <div className="form-item">
+                    <Form.Item name="range-picker" label="Chọn thời gian">
+                      <RangePicker
+                        format="DD-MM-YYYY"
+                        onChange={handleRangePickerChange}
+                        allowClear
+                      />
+                    </Form.Item>
+                  </div>
+                </Col>
+                <Col span={19} style={{ marginLeft: "575px", flex: 1 }}>
+                  <div className="form-thietbi form-item">
+                    <label>Từ khóa</label>
+                    <Form.Item name="email">
+                      <Input
+                        className="form-input"
+                        onChange={handleKeywordChange}
+                      />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
               <Row>
                 <Col span={22}>
                   <div>
                     <div style={{ marginBottom: 16 }}></div>
                     <Table<DiaryData>
+                      rowClassName={(record, index) =>
+                        index % 2 === 0 ? "table-row-even" : "table-row-odd"
+                      }
                       columns={columns}
                       className="custom-table"
-                      dataSource={diaryData}
+                      dataSource={filteredData}
                       pagination={{
                         pageSize: 5,
                         pageSizeOptions: ["5", "10", "15"],

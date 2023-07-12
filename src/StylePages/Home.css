@@ -369,6 +369,15 @@
     color: white;
 }
 
+.table-row-even {
+    background-color: #FFFFFF;
+    /* Màu nền cho dòng chẵn */
+}
+
+.table-row-odd {
+    background: var(--orange-orange-50, #FFF2E7);
+}
+
 
 *h6 {
     color: var(--gray-gray-400-text, #535261);
