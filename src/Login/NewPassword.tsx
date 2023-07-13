@@ -71,13 +71,15 @@ const NewPass = () => {
     <div>
       <Row>
         <Col className="bg1 box" span={10}>
-          <div className="mt-5">
+          <div style={{ margin: "80px" }}>
             <img src="/asset/img/logoalta.png" alt="" />
           </div>
-          <Form className="mt-5" name="newpass" onFinish={handleSubmit}>
-            <div style={{ marginBottom: "16px" }}>
+          <Form className="" name="newpass" onFinish={handleSubmit}>
+            <div style={{ marginTop: "-40px" }}>
               <h1 className="title">Đặt lại mật khẩu</h1>
-              <label className="title2">Vui lòng nhập mật khẩu mới</label>
+              <label style={{ marginLeft: "120px" }} className="title2">
+                Vui lòng nhập mật khẩu mới
+              </label>
               <Form.Item
                 name="password"
                 rules={[
@@ -114,12 +116,8 @@ const NewPass = () => {
               </Form.Item>
             </div>
 
-            <div className="button-container mt-5">
-              <Button
-                className="buttonconfirm"
-                type="primary"
-                htmlType="submit"
-              >
+            <div style={{ marginLeft: "120px" }} className="button-container">
+              <Button className="buttonforget" type="primary" htmlType="submit">
                 Xác nhận
               </Button>
             </div>

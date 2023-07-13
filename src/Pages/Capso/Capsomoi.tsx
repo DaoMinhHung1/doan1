@@ -156,12 +156,13 @@ const Capsomoi: React.FC = () => {
       setIsOrderActive(true);
       showModal(newOrderData);
 
-      const updatedAllocatedNumbers = [...allocatedNumbers, maso];
-      saveAllocatedNumbers(orderNumbers.namedv, updatedAllocatedNumbers);
+      // Thêm maso vào mảng allocatedNumbers trong Local Storage
+      allocatedNumbers.push(maso);
+      saveAllocatedNumbers(orderNumbers.namedv, allocatedNumbers);
 
       setAllocatedOrderNumbers((prevState) => ({
         ...prevState,
-        [orderNumbers.namedv]: updatedAllocatedNumbers,
+        [orderNumbers.namedv]: allocatedNumbers,
       }));
     } catch (error) {
       console.error("Lỗi khi thêm dịch vụ:", error);

@@ -9,6 +9,7 @@ import {
   Select,
   Menu,
   Dropdown,
+  Badge,
 } from "antd";
 import "../StylePages/Home.css";
 import { BellOutlined } from "@ant-design/icons";
@@ -24,9 +25,17 @@ import { useDispatch } from "react-redux";
 import { fetchOrderNumbers } from "../redux/ordernumbersSlice";
 import _ from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBan,
+  faCalendar,
+  faCalendarCheck,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
 import { fetchServices } from "../redux/servicesSlice";
 import { fetchDevices } from "../redux/devicesSlice";
+import "../StylePages/Index.css";
+import moment from "moment";
+
 const { Sider } = Layout;
 const { Option } = Select;
 
@@ -78,6 +87,7 @@ const Home: React.FC = () => {
       servicesnumber2++;
     }
   });
+
   //tính thiết bị
   let devicesnumber = 0;
   let devicesnumber2 = 0;
@@ -90,23 +100,48 @@ const Home: React.FC = () => {
     }
   });
 
+  //Tính phần trăm thiết bị
+  const percentageDevices = (devicesnumber / devicesData.length) * 100;
+  const percentageDevices2 = (devicesnumber2 / devicesData.length) * 100;
+  //Tính phần trăm dịch vụ
+  const percentageService = (servicesnumber / servicesData.length) * 100;
+  const percentageService2 = (servicesnumber2 / servicesData.length) * 100;
+  //Tính phần trăm cấp số
+  const percentageOrdernumber = (totalActive / ordernumbers.length) * 100;
+  const percentageOrdernumber2 = (totalInactive / ordernumbers.length) * 100;
+
+  //Thông báo chuông
+  const unreadCount = ordernumbers.length;
   const menu = (
     <Menu
-      style={{ maxHeight: "200px", overflowY: "scroll", background: "#FFF2E7" }}
+      style={{
+        maxHeight: "300px",
+        width: "400px",
+        overflowY: "auto",
+        background: "#f8f8f8",
+        border: "1px solid #dcdcdc",
+        borderRadius: "4px",
+      }}
     >
       {ordernumbers.map((order) => (
         <Menu.Item
           key={order.id}
           style={{
-            height: "50px",
-            width: "250px",
-            marginBottom: "15px",
-            marginTop: "5px",
+            height: "auto",
+            marginBottom: "10px",
+            padding: "10px",
+            background: "#fff",
+            borderRadius: "4px",
+            boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.15)",
           }}
         >
-          <div style={{ background: "white" }}>
-            <p>Người dùng: {order.namekh} </p>
-            <p>Thời gian nhận số: {order.enddate}</p>
+          <div>
+            <p style={{ marginBottom: "5px", fontWeight: "bold" }}>
+              Người dùng: {order.namekh}
+            </p>
+            <p style={{ marginBottom: "0" }}>
+              Thời gian nhận số: {order.enddate}
+            </p>
           </div>
         </Menu.Item>
       ))}
@@ -138,7 +173,7 @@ const Home: React.FC = () => {
 
   //Tính thống kê theo ngày
   const dataByDate = _.groupBy(ordernumbersData, (order) => {
-    return order.startdate; // Đảm bảo định dạng ngày đúng ở đây
+    return moment(order.startdate, "DD/MM/YYYY").format("DD-MM"); // Chuyển đổi định dạng ngày
   });
 
   const dailyData = _.map(dataByDate, (orders, date) => ({
@@ -146,11 +181,14 @@ const Home: React.FC = () => {
     value: orders.length,
   }));
 
-  const data = _.map(dailyData, (data) => ({
+  const sortedData = _.sortBy(dailyData, (data) =>
+    moment(data.startdate, "DD-MM")
+  ); // Sắp xếp dữ liệu theo ngày tăng dần
+
+  const data = _.map(sortedData, (data) => ({
     startdate: data.startdate,
     value: data.value,
   }));
-
   //Tính thống kê theo tuần
   const getWeekData = (dailyData: any[]) => {
     const weekData: any[] = [];
@@ -259,18 +297,15 @@ const Home: React.FC = () => {
         </Header>
         <Layout>
           <Content>
-            <h1
-              style={{ marginLeft: "70px", marginTop: "-20px" }}
-              className="titletopbar"
-            >
+            <h1 style={{ marginLeft: "70px" }} className="titletopbar">
               Biểu đồ cấp số
             </h1>
             <div className="card-dashboard-container">
-              <div className="card-dashboard" style={{ marginTop: "10px" }}>
+              <div className="card-dashboard" style={{ marginTop: "-20px" }}>
                 <Card style={{ height: "120px", width: "200px" }}>
                   <div>
                     <FontAwesomeIcon
-                      style={{ height: "35px" }}
+                      style={{ height: "35px", color: "#6493F9" }}
                       icon={faCalendar}
                     />
                     <p style={{ marginLeft: "40px", marginTop: "-40px" }}>
@@ -282,12 +317,12 @@ const Home: React.FC = () => {
                   </div>
                 </Card>
               </div>
-              <div className="card-dashboard" style={{ marginTop: "10px" }}>
+              <div className="card-dashboard" style={{ marginTop: "-20px" }}>
                 <Card style={{ height: "120px", width: "200px" }}>
                   <div>
                     <FontAwesomeIcon
-                      style={{ height: "35px" }}
-                      icon={faCalendar}
+                      style={{ height: "35px", color: "#7cb305" }}
+                      icon={faCalendarCheck}
                     />
                     <p style={{ marginLeft: "40px", marginTop: "-40px" }}>
                       Số thứ tự đã sử dụng
@@ -298,14 +333,14 @@ const Home: React.FC = () => {
                   </div>
                 </Card>
               </div>
-              <div className="card-dashboard" style={{ marginTop: "10px" }}>
+              <div className="card-dashboard" style={{ marginTop: "-20px" }}>
                 <Card style={{ height: "120px", width: "200px" }}>
                   <div>
                     <FontAwesomeIcon
-                      style={{ height: "35px" }}
-                      icon={faCalendar}
+                      style={{ height: "35px", color: "#d48806" }}
+                      icon={faUsers}
                     />
-                    <p style={{ marginLeft: "40px", marginTop: "-40px" }}>
+                    <p style={{ marginLeft: "50px", marginTop: "-40px" }}>
                       Số thứ tự đang chờ
                     </p>
                   </div>
@@ -314,19 +349,16 @@ const Home: React.FC = () => {
                   </div>
                 </Card>
               </div>
-              <div className="card-dashboard" style={{ marginTop: "10px" }}>
+              <div className="card-dashboard" style={{ marginTop: "-20px" }}>
                 <Card style={{ height: "120px", width: "200px" }}>
                   <div>
-                    <FontAwesomeIcon
-                      style={{ height: "35px" }}
-                      icon={faCalendar}
-                    />
+                    <FontAwesomeIcon style={{ height: "35px" }} icon={faBan} />
                     <p style={{ marginLeft: "40px", marginTop: "-40px" }}>
                       Số thứ tự bỏ qua
                     </p>
                   </div>
                   <div style={{ marginTop: "40px" }}>
-                    <p>0</p>
+                    <p>{totalInactive}</p>
                   </div>
                 </Card>
               </div>
@@ -339,7 +371,7 @@ const Home: React.FC = () => {
               marginTop: "-40px",
             }}
           >
-            <Card style={{ width: "92%", height: "450px" }}>
+            <Card style={{ width: "92%", height: "450px", marginTop: "25px" }}>
               <Row>
                 <Col style={{ marginTop: "-30px" }} span={20}>
                   <h1>Bảng thống kê theo tháng</h1>
@@ -374,27 +406,36 @@ const Home: React.FC = () => {
         width={401}
         style={{ backgroundColor: "#fff" }}
       >
-        <Row style={{ marginTop: "20px", marginLeft: "-150px" }}>
-          <Col span={10}>
-            <Dropdown overlay={menu} trigger={["click"]}>
-              <BellOutlined
-                style={{
-                  fontSize: "24px",
-                  color: "red",
-                  marginLeft: "200px",
-                }}
-              />
-            </Dropdown>
+        <Row style={{ marginTop: "20px", marginLeft: "-140px" }}>
+          <Col span={13}>
+            <div style={{ marginLeft: "240px" }}>
+              <Dropdown
+                overlay={menu}
+                trigger={["click"]}
+                placement="bottomRight"
+              >
+                <Badge count={unreadCount}>
+                  <BellOutlined
+                    className="bell-icon "
+                    style={{
+                      fontSize: "24px",
+                      color: "red",
+                      cursor: "pointer",
+                    }}
+                  />
+                </Badge>
+              </Dropdown>
+            </div>
           </Col>
-          <Col span={8}>
+          <Col span={7}>
             <img
-              style={{ marginTop: "-10px", marginLeft: "70px" }}
+              style={{ marginTop: "-10px" }}
               className="imgaccount"
               src={userData?.avatar}
               alt=""
             />
           </Col>
-          <Col style={{ marginLeft: "-15px" }} className="" span={6}>
+          <Col style={{ marginLeft: "-60px" }} className="" span={3}>
             <p className="xc">xin chào</p>
             <p style={{ marginTop: "-15px" }} className="name">
               {userData?.namedn}
@@ -414,8 +455,26 @@ const Home: React.FC = () => {
           <div style={{ marginTop: "-30px" }} className="card-dulieusider">
             <Card className="card-sider">
               <div style={{ marginTop: "-32px" }} className="card-content">
-                <Progress type="circle" size={60} percent={90} />
-                <div className="card-info">
+                <div className="nested-progress-container">
+                  <Progress
+                    style={{ marginTop: "-30px" }}
+                    type="circle"
+                    size={60}
+                    percent={percentageDevices}
+                    strokeColor="#faad14"
+                    className="outer-progress"
+                  />
+                  <Progress
+                    style={{ marginTop: "-30px" }}
+                    type="circle"
+                    size={40}
+                    percent={percentageDevices2}
+                    strokeColor="#bfbfbf"
+                    format={() => ""}
+                    className="inner-progress"
+                  />
+                </div>
+                <div style={{ marginLeft: "70px" }} className="card-info">
                   <div>
                     <p>{devicesData.length}</p>
                     <p>Thiết bị</p>
@@ -435,19 +494,36 @@ const Home: React.FC = () => {
           <div style={{ marginTop: "60px" }} className="card-dulieusider">
             <Card className="card-sider">
               <div style={{ marginTop: "-32px" }} className="card-content">
-                <Progress type="circle" size={60} percent={90} />
-                <div className="card-info">
+                <Progress
+                  style={{ marginTop: "10px", marginLeft: "25px" }}
+                  type="circle"
+                  size={60}
+                  percent={percentageService}
+                  strokeColor="#1677ff"
+                  className="outer-progress"
+                />
+                <Progress
+                  style={{ marginTop: "10px", marginLeft: "25px" }}
+                  type="circle"
+                  size={40}
+                  percent={percentageService2}
+                  strokeColor="#bfbfbf"
+                  format={() => ""}
+                  className="inner-progress"
+                />
+                <div style={{ marginLeft: "60px" }} className="card-info">
                   <div>
-                    <p>{servicesData.length}</p>
+                    <p>{ordernumbers.length}</p>
                     <p>Dịch vụ</p>
                   </div>
-                  <div>
+                  <div style={{ marginLeft: "40px" }}>
                     <p>
-                      Đang hoạt động <span>{servicesnumber}</span>
+                      Đã sử dụng <span>{totalActive}</span>
                     </p>
                     <p>
-                      Ngưng hoạt động <span>{servicesnumber2}</span>
+                      Đang chờ <span>{totalInactive}</span>
                     </p>
+                    <p>Bỏ qua</p>
                   </div>
                 </div>
               </div>
@@ -457,12 +533,23 @@ const Home: React.FC = () => {
             <Card className="card-sider">
               <div style={{ marginTop: "-32px" }} className="card-content">
                 <Progress
-                  style={{ marginTop: "-50px" }}
+                  style={{ marginTop: "10px", marginLeft: "25px" }}
                   type="circle"
                   size={60}
-                  percent={90}
+                  percent={percentageOrdernumber}
+                  strokeColor="#52c41a"
+                  className="outer-progress"
                 />
-                <div className="card-info">
+                <Progress
+                  style={{ marginTop: "10px", marginLeft: "25px" }}
+                  type="circle"
+                  size={40}
+                  percent={percentageOrdernumber2}
+                  strokeColor="#bfbfbf"
+                  format={() => ""}
+                  className="inner-progress"
+                />
+                <div style={{ marginLeft: "60px" }} className="card-info">
                   <div>
                     <p>{ordernumbers.length}</p>
                     <p>Cấp số</p>

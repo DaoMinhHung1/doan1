@@ -187,8 +187,11 @@ const Quanlycapso: React.FC = () => {
         <SiderComponent />
         <Layout>
           <Header className="account bgheader">
-            <Col span={15}>
-              <h1 className="titletopbar">Cấp số</h1>
+            <Col style={{ marginLeft: "-17px" }} span={15}>
+              <h1 className="chuotren">
+                Cấp số &gt;{" "}
+                <span className="titletopbar">Danh sách cấp số</span>
+              </h1>
             </Col>
             <HeaderComponent />
           </Header>
@@ -250,10 +253,9 @@ const Quanlycapso: React.FC = () => {
                   </div>
                 </Col>
               </Row>
-              <Row>
+              <Row style={{ marginTop: "-15px" }}>
                 <Col span={22}>
                   <div>
-                    <div style={{ marginBottom: 16 }}></div>
                     <Table<OrderNumbers>
                       rowClassName={(record, index) =>
                         index % 2 === 0 ? "table-row-even" : "table-row-odd"

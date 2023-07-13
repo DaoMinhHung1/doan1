@@ -1,5 +1,5 @@
 import { BellOutlined } from "@ant-design/icons";
-import { Col, Dropdown, Menu } from "antd";
+import { Badge, Col, Dropdown, Menu } from "antd";
 import { Header } from "antd/lib/layout/layout";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -36,23 +36,38 @@ const HeaderComponent: React.FC = () => {
     fetchData();
   }, [dispatch]);
 
+  const unreadCount = ordernumbers.length;
+
   const menu = (
     <Menu
-      style={{ maxHeight: "200px", overflowY: "scroll", background: "#FFF2E7" }}
+      style={{
+        maxHeight: "300px",
+        width: "400px",
+        overflowY: "auto",
+        background: "#f8f8f8",
+        border: "1px solid #dcdcdc",
+        borderRadius: "4px",
+      }}
     >
       {ordernumbers.map((order) => (
         <Menu.Item
           key={order.id}
           style={{
-            height: "50px",
-            width: "250px",
-            marginBottom: "15px",
-            marginTop: "5px",
+            height: "auto",
+            marginBottom: "10px",
+            padding: "10px",
+            background: "#fff",
+            borderRadius: "4px",
+            boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.15)",
           }}
         >
-          <div style={{ background: "white" }}>
-            <p>Người dùng: {order.namekh} </p>
-            <p>Thời gian nhận số: {order.enddate}</p>
+          <div>
+            <p style={{ marginBottom: "5px", fontWeight: "bold" }}>
+              Người dùng: {order.namekh}
+            </p>
+            <p style={{ marginBottom: "0" }}>
+              Thời gian nhận số: {order.enddate}
+            </p>
           </div>
         </Menu.Item>
       ))}
@@ -63,15 +78,17 @@ const HeaderComponent: React.FC = () => {
     <>
       {/* <Header className="account bgheader"> */}
       <Col span={5}>
-        <div className="">
-          <Dropdown overlay={menu} trigger={["click"]}>
-            <BellOutlined
-              style={{
-                fontSize: "24px",
-                color: "red",
-                marginLeft: "200px",
-              }}
-            />
+        <div style={{ marginLeft: "200px" }}>
+          <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
+            <Badge count={unreadCount}>
+              <BellOutlined
+                style={{
+                  fontSize: "24px",
+                  color: "red",
+                  cursor: "pointer",
+                }}
+              />
+            </Badge>
           </Dropdown>
         </div>
       </Col>

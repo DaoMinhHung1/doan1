@@ -87,10 +87,14 @@ const Login: React.FC = () => {
     <Content>
       <Row>
         <Col className="bg1 box" span={10}>
-          <div className="mt-5">
+          <div style={{ marginTop: "80px" }}>
             <img src="/asset/img/logoalta.png" alt="" />
           </div>
-          <Form className="mt-5" name="login" onFinish={handleSubmit}>
+          <Form
+            style={{ marginTop: "50px" }}
+            name="login"
+            onFinish={handleSubmit}
+          >
             <div style={{ marginBottom: "16px" }}>
               <label>Tên đăng nhập</label>
               <Form.Item
@@ -131,13 +135,13 @@ const Login: React.FC = () => {
               </Form.Item>
             </div>
 
-            <div style={{ marginTop: "16px" }}>
+            <div style={{ marginTop: "-20px" }}>
               <Link className="forgetpass" type="primary" to="/forget">
                 Quên mật khẩu?
               </Link>
             </div>
 
-            <div style={{ marginTop: "16px" }}>
+            <div style={{ marginTop: "-30px" }}>
               <Button className="buttonlogin" type="primary" htmlType="submit">
                 Đăng nhập
               </Button>

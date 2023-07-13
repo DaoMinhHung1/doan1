@@ -141,8 +141,10 @@ const Quanlybaocao: React.FC = () => {
       <SiderComponent />
       <Layout>
         <Header className="account bgheader">
-          <Col span={15}>
-            <h1 className="titletopbar">Báo cáo</h1>
+          <Col style={{ marginLeft: "-17px" }} span={15}>
+            <h1 className="chuotren">
+              Báo cáo &gt; <span className="titletopbar">Lập báo cáo</span>
+            </h1>
           </Col>
           <HeaderComponent />
         </Header>

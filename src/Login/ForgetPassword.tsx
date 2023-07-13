@@ -53,11 +53,11 @@ const Forget = () => {
     <div>
       <Row>
         <Col className="bg1 box" span={10}>
-          <div className="mt-5">
+          <div style={{ marginTop: "80px" }} className="mt-5">
             <img src="/asset/img/logoalta.png" alt="" />
           </div>
           <Form className="mt-5" name="forget" onFinish={handleSubmit}>
-            <div style={{ marginBottom: "16px" }}>
+            <div style={{ marginTop: "50px" }}>
               <h1 className="title">Đặt lại mật khẩu</h1>
               <label className="title2">
                 Vui lòng nhập lại email để đặt lại mật khẩu của bạn
@@ -85,7 +85,7 @@ const Forget = () => {
               </Form.Item>
             </div>
 
-            <div className="button-container mt-5">
+            <div style={{ marginLeft: "25px" }} className="button-container">
               <Space>
                 <Link to="/">
                   <Button

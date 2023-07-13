@@ -85,8 +85,11 @@ const Vaitro: React.FC = () => {
         <SiderComponent />
         <Layout>
           <Header className="account bgheader">
-            <Col span={15}>
-              <h1 className="titletopbar">Vai trò</h1>
+            <Col style={{ marginLeft: "-17px" }} span={15}>
+              <h1 className="chuotren">
+                Vai trò &gt;{" "}
+                <span className="titletopbar">Quản lý vai trò</span>
+              </h1>
             </Col>
             <HeaderComponent />
           </Header>

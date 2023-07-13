@@ -161,8 +161,11 @@ const Quanlydichvu: React.FC = () => {
         <SiderComponent />
         <Layout>
           <Header className="account bgheader">
-            <Col span={15}>
-              <h1 className="titletopbar">Dịch vụ</h1>
+            <Col style={{ marginLeft: "-17px" }} span={15}>
+              <h1 className="chuotren">
+                Dịch vụ &gt;{" "}
+                <span className="titletopbar">Danh sách dịch vụ</span>
+              </h1>
             </Col>
             <HeaderComponent />
           </Header>
@@ -216,7 +219,7 @@ const Quanlydichvu: React.FC = () => {
               <Row>
                 <Col span={22}>
                   <div>
-                    <div style={{ marginBottom: 16 }}></div>
+                    <div style={{ marginBottom: 16, marginTop: "-20px" }}></div>
                     <Table<ServiceData>
                       rowClassName={(record, index) =>
                         index % 2 === 0 ? "table-row-even" : "table-row-odd"

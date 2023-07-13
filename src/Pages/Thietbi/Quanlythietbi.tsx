@@ -209,8 +209,11 @@ const Quanlythietbi: React.FC = () => {
         <SiderComponent />
         <Layout>
           <Header className="account bgheader">
-            <Col span={15}>
-              <h1 className="titletopbar">Thiết bị</h1>
+            <Col style={{ marginLeft: "-17px" }} span={15}>
+              <h1 className="chuotren">
+                Thiết bị &gt;{" "}
+                <span className="titletopbar">Danh sách thiết bị</span>
+              </h1>
             </Col>
             <HeaderComponent />
           </Header>
