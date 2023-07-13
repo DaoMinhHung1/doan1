@@ -34,7 +34,12 @@ const User: React.FC = () => {
             </div>
           </Col>
           <Col span={2}>
-            <img className="imgaccount" src={userData.avatar} alt="" />
+            <img
+              style={{ marginTop: "15px" }}
+              className="imgaccount"
+              src={userData.avatar}
+              alt=""
+            />
           </Col>
           <Col className="" span={2}>
             <p className="xc">xin chào</p>
