@@ -161,7 +161,12 @@ const Themtaikhoan: React.FC = () => {
         <Layout>
           <Header className="account bgheader">
             <Col span={15}>
-              <h1 className="titletopbar">Tài khoản</h1>
+              <h1 className="chuotren">
+                Cài đặt hệ thống &gt;{" "}
+                <span className="titletopbar">Quản lý tài khoản</span>
+                &gt;
+                <span>Thêm tài khoản</span>
+              </h1>
             </Col>
             <HeaderComponent />
           </Header>

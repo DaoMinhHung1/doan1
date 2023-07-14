@@ -87,7 +87,7 @@ const Vaitro: React.FC = () => {
           <Header className="account bgheader">
             <Col style={{ marginLeft: "-17px" }} span={15}>
               <h1 className="chuotren">
-                Vai trò &gt;{" "}
+                Cài đặt hệ thống &gt;{" "}
                 <span className="titletopbar">Quản lý vai trò</span>
               </h1>
             </Col>
@@ -130,6 +130,7 @@ const Vaitro: React.FC = () => {
                       }
                       columns={columns}
                       className="custom-table"
+                      style={{ height: "50px" }}
                       dataSource={positionList}
                       pagination={{
                         pageSize: 6,

@@ -57,7 +57,12 @@ const Thongtincapso: React.FC = () => {
         <Layout>
           <Header className="account bgheader">
             <Col span={15}>
-              <h1 className="titletopbar">Cấp số</h1>
+              <h1 className="chuotren">
+                Cấp số &gt;{" "}
+                <span className="titletopbar">Danh sách cấp số</span>
+                &gpt;
+                <span>Chi tiết</span>
+              </h1>
             </Col>
             <HeaderComponent />
           </Header>

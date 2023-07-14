@@ -21,7 +21,11 @@ const Chitietthietbi: React.FC = () => {
         <Layout>
           <Header className="account bgheader">
             <Col span={15}>
-              <h1 className="titletopbar">Thiết bị</h1>
+              <h1 className="chuotren">
+                Thiết bị &gt;{" "}
+                <span className="chuotren">Danh sách thiết bị</span> &gt;{" "}
+                <span className="titletopbar">Chi tiết thiết bị</span>
+              </h1>
             </Col>
             <HeaderComponent />
           </Header>

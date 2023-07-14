@@ -136,6 +136,17 @@ const Quanlybaocao: React.FC = () => {
     },
   ];
 
+  const [sortedOrderNumbers, setSortedOrderNumbers] = useState<OrderNumbers[]>(
+    []
+  );
+  useEffect(() => {
+    if (originalData.length > 0) {
+      setSortedOrderNumbers(
+        [...originalData].sort((a, b) => b.STT.localeCompare(a.STT))
+      );
+    }
+  }, [originalData]);
+
   return (
     <Layout>
       <SiderComponent />
@@ -187,7 +198,8 @@ const Quanlybaocao: React.FC = () => {
                     }
                     columns={columns}
                     className="custom-table"
-                    dataSource={filteredData}
+                    style={{ height: "50px" }}
+                    dataSource={sortedOrderNumbers}
                     pagination={{
                       pageSize: 5,
                       pageSizeOptions: ["5", "10", "15"],

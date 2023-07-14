@@ -78,7 +78,7 @@ const Chitietdichvu: React.FC = () => {
             <Content>
               <Row gutter={[16, 16]}>
                 <Col span={6}>
-                  <Card className="">
+                  <Card style={{ height: "525px" }} className="">
                     <h1 className="titletopbar">Thông tin dịch vụ</h1>
                     <Row>
                       <Col span={8}>
@@ -127,7 +127,7 @@ const Chitietdichvu: React.FC = () => {
                   </Card>
                 </Col>
                 <Col span={16}>
-                  <Card className="">
+                  <Card style={{ height: "525px" }} className="">
                     <Row>
                       <div>
                         <Select
@@ -159,7 +159,11 @@ const Chitietdichvu: React.FC = () => {
                     </Row>
                     <Row style={{ marginTop: "20px" }}>
                       <Table
+                        rowClassName={(record, index) =>
+                          index % 2 === 0 ? "table-row-even" : "table-row-odd"
+                        }
                         columns={columns}
+                        className="custom-table"
                         dataSource={servicesData}
                         pagination={{
                           pageSize: 4,

@@ -155,6 +155,10 @@ const Quanlydichvu: React.FC = () => {
     },
   ];
 
+  const sortedSevices = [...filteredServices].sort((a, b) => {
+    return b.madv.localeCompare(a.madv);
+  });
+
   return (
     <>
       <Layout>
@@ -226,7 +230,8 @@ const Quanlydichvu: React.FC = () => {
                       }
                       columns={columns}
                       className="custom-table"
-                      dataSource={filteredServices}
+                      style={{ height: "50px" }}
+                      dataSource={sortedSevices}
                       pagination={{
                         pageSize: 5,
                         pageSizeOptions: ["5", "10", "15"],

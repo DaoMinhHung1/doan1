@@ -37,7 +37,12 @@ const Capnhatvaitro: React.FC = () => {
         <Layout>
           <Header className="account bgheader">
             <Col span={15}>
-              <h1 className="titletopbar">Vai trò</h1>
+              <h1 className="chuotren">
+                Cài đặt hệ thống &gt;{" "}
+                <span className="chuotren">Quản lý vai trò</span>
+                &gpt;
+                <span className="titletopbar">Cập nhật vai trò</span>
+              </h1>
             </Col>
             <HeaderComponent />
           </Header>

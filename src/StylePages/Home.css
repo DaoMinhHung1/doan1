@@ -78,6 +78,16 @@
     line-height: 30px;
 }
 
+.chuotren {
+    color: var(--gray-blue-gray-4-place-holder, #7E7D88);
+    /* 20/20 Bold */
+    font-family: Nunito;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 30px;
+}
+
 .imgaccount {
     width: 40px;
     height: 40px;
@@ -249,8 +259,7 @@
 .form-input {
     width: 300px;
     display: flex;
-    width: 300px;
-    height: 44px;
+    height: 40px;
     padding: 10px 12px;
     justify-content: space-between;
     align-items: center;
@@ -322,7 +331,7 @@
 .input-chung {
     display: flex;
     width: 450px;
-    height: 44px;
+    height: 40px;
     padding: 10px 270px 10px 12px;
     align-items: center;
     gap: 10px;
@@ -378,15 +387,8 @@
     background: var(--orange-orange-50, #FFF2E7);
 }
 
-.chuotren {
-    color: var(--gray-blue-gray-4-place-holder, #7E7D88);
-    /* 20/20 Bold */
-    font-family: Nunito;
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 30px;
-}
+
+
 
 *h6 {
     color: var(--gray-gray-400-text, #535261);

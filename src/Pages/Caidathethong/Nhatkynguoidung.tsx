@@ -180,6 +180,7 @@ const Quanlynguoidung: React.FC = () => {
                       }
                       columns={columns}
                       className="custom-table"
+                      style={{ height: "50px" }}
                       dataSource={filteredData}
                       pagination={{
                         pageSize: 5,

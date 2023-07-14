@@ -148,7 +148,12 @@ const Capnhatdichvu: React.FC = () => {
         <Layout>
           <Header className="account bgheader">
             <Col span={15}>
-              <h1 className="titletopbar">Dịch vụ</h1>
+              <h1 className="chuotren">
+                Dịch vụ &gt; <span className="chuotren">Danh sách dịch vụ</span>{" "}
+                &gt;
+                <span>Chi tiết</span> &gpt;
+                <span className="titletopbar">Cập nhật dịch vụ</span>
+              </h1>
             </Col>
             <HeaderComponent />
           </Header>

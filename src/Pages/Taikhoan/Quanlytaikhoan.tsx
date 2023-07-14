@@ -142,7 +142,7 @@ const Quanlytaikhoan: React.FC = () => {
           <Header className="account bgheader">
             <Col style={{ marginLeft: "-17px" }} span={15}>
               <h1 className="chuotren">
-                Tài khoản &gt;{" "}
+                Cài đặt hệ thống &gt;{" "}
                 <span className="titletopbar">Quản lý tài khoản</span>
               </h1>
             </Col>
@@ -197,6 +197,7 @@ const Quanlytaikhoan: React.FC = () => {
                       }
                       columns={columns}
                       className="custom-table"
+                      style={{ height: "50px" }}
                       dataSource={filteredUsers}
                       pagination={{
                         pageSize: 5,

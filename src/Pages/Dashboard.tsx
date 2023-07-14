@@ -460,7 +460,7 @@ const Home: React.FC = () => {
                     style={{ marginTop: "-30px" }}
                     type="circle"
                     size={60}
-                    percent={percentageDevices}
+                    percent={Number(percentageDevices.toFixed(0))}
                     strokeColor="#faad14"
                     className="outer-progress"
                   />
@@ -468,7 +468,7 @@ const Home: React.FC = () => {
                     style={{ marginTop: "-30px" }}
                     type="circle"
                     size={40}
-                    percent={percentageDevices2}
+                    percent={Number(percentageDevices2.toFixed(0))}
                     strokeColor="#bfbfbf"
                     format={() => ""}
                     className="inner-progress"
@@ -498,7 +498,7 @@ const Home: React.FC = () => {
                   style={{ marginTop: "10px", marginLeft: "25px" }}
                   type="circle"
                   size={60}
-                  percent={percentageService}
+                  percent={Number(percentageService.toFixed(0))}
                   strokeColor="#1677ff"
                   className="outer-progress"
                 />
@@ -506,7 +506,7 @@ const Home: React.FC = () => {
                   style={{ marginTop: "10px", marginLeft: "25px" }}
                   type="circle"
                   size={40}
-                  percent={percentageService2}
+                  percent={Number(percentageService2.toFixed(0))}
                   strokeColor="#bfbfbf"
                   format={() => ""}
                   className="inner-progress"
@@ -536,7 +536,7 @@ const Home: React.FC = () => {
                   style={{ marginTop: "10px", marginLeft: "25px" }}
                   type="circle"
                   size={60}
-                  percent={percentageOrdernumber}
+                  percent={Number(percentageOrdernumber.toFixed(0))}
                   strokeColor="#52c41a"
                   className="outer-progress"
                 />
@@ -544,7 +544,7 @@ const Home: React.FC = () => {
                   style={{ marginTop: "10px", marginLeft: "25px" }}
                   type="circle"
                   size={40}
-                  percent={percentageOrdernumber2}
+                  percent={Number(percentageOrdernumber2.toFixed(0))}
                   strokeColor="#bfbfbf"
                   format={() => ""}
                   className="inner-progress"

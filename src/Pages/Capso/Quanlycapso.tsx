@@ -181,6 +181,10 @@ const Quanlycapso: React.FC = () => {
     },
   ];
 
+  const sortedOrdernumber = [...filteredOrderNumbers].sort((a, b) => {
+    return b.STT.localeCompare(a.STT);
+  });
+
   return (
     <>
       <Layout>
@@ -262,7 +266,8 @@ const Quanlycapso: React.FC = () => {
                       }
                       columns={columns}
                       className="custom-table"
-                      dataSource={filteredOrderNumbers}
+                      style={{ height: "50px" }}
+                      dataSource={sortedOrdernumber}
                       pagination={{
                         pageSize: 5,
                         pageSizeOptions: ["5", "10", "15"],

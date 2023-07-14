@@ -203,6 +203,10 @@ const Quanlythietbi: React.FC = () => {
     },
   ];
 
+  const sortedDevices = [...filteredDevices].sort((a, b) => {
+    return b.matb.localeCompare(a.matb);
+  });
+
   return (
     <>
       <Layout>
@@ -276,7 +280,7 @@ const Quanlythietbi: React.FC = () => {
               </Row>
               <Row>
                 <Col span={22}>
-                  <div>
+                  <div style={{ marginTop: "-30px" }}>
                     <div style={{ marginBottom: 16 }}></div>
                     <Table<DeviceData>
                       rowClassName={(record, index) =>
@@ -284,7 +288,8 @@ const Quanlythietbi: React.FC = () => {
                       }
                       columns={columns}
                       className="custom-table"
-                      dataSource={filteredDevices}
+                      style={{ height: "50px" }}
+                      dataSource={sortedDevices}
                       pagination={{
                         pageSize: 5,
                         pageSizeOptions: ["5", "10", "15"],
